@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 4: Multiple Services - UI5 FE Mockserver Tutorial</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../index.html" class="nav-link">Overview</a></li>
+            <li class="nav-item"><a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a></li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../summary.html" class="nav-link">Summary & Next Steps</a></li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="main-content">
+        <h1>Exercise 4: Multiple Services Configuration</h1>
+        <div class="section-intro">
+          This exercise shows how to configure multiple OData services representing a microservices architecture where
+          different domains are handled by separate services.
+        </div>
+        <div class="content-section">
+          <h2 id="understanding-services">4.1 Understanding the Real Services Architecture</h2>
+
+          <p>
+            In this exercise, you'll configure multiple OData services based on the actual CAP services running on
+            <code>http://localhost:4004</code>
+            . We have two services available:
+          </p>
+
+          <ul>
+            <li>
+              <strong>BookshopService</strong>
+              :
+              <code>/bookshop</code>
+              - Main service with Books, Chapters, and Reviews entities
+            </li>
+            <li>
+              <strong>ReviewsService</strong>
+              :
+              <code>/reviews</code>
+              - Service for review management
+            </li>
+          </ul>
+
+          <p>This represents a microservices setup where different domains are handled by separate services.</p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="setup-multiple-services">4.2 Setup Multiple Services Configuration</h2>
+
+          <h3>1. Create directory structure for the reviews service:</h3>
+          <pre class="language-bash"><code>mkdir -p webapp/localService/reviewService
+mkdir -p webapp/localService/reviewService/data</code></pre>
+
+          <h3>2. Copy the actual reviews service metadata:</h3>
+          <p>Since we're using a real CAP service, we can copy the metadata directly from the running service:</p>
+          <p>
+            Create
+            <code>webapp/localService/reviewService/metadata.xml</code>
+            by copying the metadata from
+            <code>http://localhost:4004/reviews/$metadata</code>
+            .
+          </p>
+
+          <h3>
+            3. Create review data (
+            <code>webapp/localService/reviewService/data/Reviews.json</code>
+            ):
+          </h3>
+          <div class="code-header">
+            <span>ex4/webapp/localService/reviewService/data/Reviews.json</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex4/webapp/localService/reviewService/data/Reviews.json"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-json"><code>[
+  {
+    "ID": "23a6dd83-a75d-41c5-ad57-2314bc67ed2b",
+    "reviewer": "John Doe",
+    "rating": 5,
+    "comment": "A timeless classic that never gets old!",
+    "book_ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  },
+  {
+    "ID": "34b7ee94-f86c-52e6-be58-3425cd78fe3c",
+    "reviewer": "Jane Smith",
+    "rating": 4,
+    "comment": "Great character development and storytelling.",
+    "book_ID": "7c8f2a1b-d4e5-4c6a-9b7e-1f3a5c8d2e4b",
+    "createdAt": "2024-01-20T14:45:00Z",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  },
+  {
+    "ID": "45c8ff05-097d-63f7-cf69-4536de89df5d",
+    "reviewer": "Book Lover",
+    "rating": 3,
+    "comment": "Decent read, but could be better paced.",
+    "book_ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "createdAt": "2024-02-01T09:15:00Z",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  }
+]</code></pre>
+
+          <h3>
+            4. Create Books reference data (
+            <code>webapp/localService/reviewService/data/Books.json</code>
+            ):
+          </h3>
+          <div class="code-header">
+            <span>ex4/webapp/localService/reviewService/data/Books.json</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex4/webapp/localService/reviewService/data/Books.json"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-json"><code>[
+  {
+    "ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  },
+  {
+    "ID": "7c8f2a1b-d4e5-4c6a-9b7e-1f3a5c8d2e4b",
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  }
+]</code></pre>
+
+          <h3>
+            5. Update
+            <code>ui5-mock.yaml</code>
+            to include both services:
+          </h3>
+          <div class="code-header">
+            <span>ex4/ui5-mock.yaml</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex4/ui5-mock.yaml"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-yaml"><code>server:
+  customMiddleware:
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        mountPath: /
+        debug: true
+        watch: true
+        services:
+          # Main bookshop service
+          - urlPath: /bookshop
+            alias: bookshop
+            metadataPath: ./webapp/localService/mainService/metadata.xml
+            mockdataPath: ./webapp/localService/mainService/data
+            generateMockData: false
+          # Reviews service
+          - urlPath: /reviews
+            alias: reviews
+            metadataPath: ./webapp/localService/reviewService/metadata.xml
+            mockdataPath: ./webapp/localService/reviewService/data
+            generateMockData: false
+        annotations: []</code></pre>
+
+          <div class="alert alert-success">
+            <strong>Result:</strong>
+            Multiple services configuration enables testing complex applications with microservices architecture.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="start-application">4.3 Start the Application</h2>
+
+          <pre class="language-bash"><code># from folder ex4
+npm run start-mock
+# or from root folder
+npm run start:ex4</code></pre>
+
+          <p>
+            Now you should see in the List Report the Books from the
+            <code>mainService</code>
+            defined in the
+            <code>/webapp/localService/mainService/data</code>
+            folder.
+          </p>
+
+          <p>
+            To see the data from the
+            <code>reviewService</code>
+            you can request the data by simply opening the URLs:
+          </p>
+          <ul>
+            <li>
+              <a href="http://localhost:8084/reviews/Reviews" target="_blank">http://localhost:8084/reviews/Reviews</a>
+            </li>
+            <li>
+              <a href="http://localhost:8084/reviews/Books" target="_blank">http://localhost:8084/reviews/Books</a>
+            </li>
+          </ul>
+
+          <p>Now you could include the reviews in the app in any way you want.</p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="next-steps">Next Steps</h2>
+          <p>
+            <strong>Exercise 5</strong>
+            will show how to implement cross-service communication where operations in one service trigger actions in
+            another service, simulating real microservices integration patterns.
+          </p>
+        </div>
+        <div class="exercise-nav">
+          <div><a href="javascript-logic.html" class="exercise-nav-prev">← Exercise 3: JavaScript Logic</a></div>
+          <div>
+            <a href="cross-service-communication.html" class="exercise-nav-next">
+              Exercise 5: Cross-Service Communication →
+            </a>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

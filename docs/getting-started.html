@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prerequisites & Setup - UI5 FE Mockserver Tutorial</title>
+    <meta
+      name="description"
+      content="Get your development environment ready for the UI5 FE Mockserver tutorial with CAP backend setup and Fiori application prerequisites." />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="index.html" class="nav-link">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a href="getting-started.html" class="nav-link">Prerequisites & Setup</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="exercises/basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="summary.html" class="nav-link">Summary & Next Steps</a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/SAP/open-ux-odata" class="nav-link" target="_blank">Open UX OData ↗</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <h1>Prerequisites & Setup</h1>
+
+        <div class="section-intro">
+          Before starting this tutorial, ensure you have the following tools and setup configured. This tutorial uses a
+          SAP CAP (Cloud Application Programming) service with multiple OData endpoints and actions.
+        </div>
+
+        <div class="content-section">
+          <h2 id="tutorial-options">🚀 Two Ways to Use This Tutorial</h2>
+
+          <div class="alert alert-info">
+            <strong>Choose your approach:</strong>
+            You can either run the complete tutorial examples or create your own app and follow the concepts.
+          </div>
+
+          <h3>Option 1: Run the Tutorial Examples (Clone Required)</h3>
+          <p>
+            If you want to run the complete tutorial examples (
+            <code>ex1/</code>
+            ,
+            <code>ex2/</code>
+            , ...
+            <code>ex9/</code>
+            ) with all configurations already set up:
+          </p>
+
+          <pre class="language-bash"><code># Clone this tutorial repository
+git clone https://github.com/marianfoo/ui5-fe-mockserver-tutorial.git
+cd ui5-fe-mockserver-tutorial
+npm install
+
+# Also clone and run the CAP backend service (see CAP Backend Setup below)
+git clone https://github.com/marianfoo/ui5-call-action.git
+cd ui5-call-action
+npm install
+npm run deploy
+npm run watch  # Keep running on http://localhost:4004</code></pre>
+
+          <h3>Option 2: Create Your Own App (No Clone Needed)</h3>
+          <p>If you want to create your own Fiori app and follow the tutorial concepts:</p>
+
+          <ul>
+            <li><strong>No need to clone this repository</strong></li>
+            <li>Just follow the tutorial steps to set up your own app</li>
+            <li>You'll still need the CAP backend service for complete testing (see CAP Backend Setup below)</li>
+            <li>Generate your own Fiori Elements app using SAP Fiori Application Generator or EasyUI5 Generator</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="required-tools">Required Tools</h2>
+          <ul>
+            <li>
+              <strong>Node.js</strong>
+              (20 LTS or higher)
+            </li>
+            <li>
+              <strong>npm</strong>
+              (comes with Node.js)
+            </li>
+            <li>
+              <strong>Git</strong>
+              - for cloning repositories
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="cap-backend-setup">CAP Backend Service Setup</h2>
+          <p>
+            This tutorial uses a SAP CAP (Cloud Application Programming) service with multiple OData endpoints and
+            actions. You'll need to run the backend service locally:
+          </p>
+
+          <h3>1. Clone and setup the CAP service:</h3>
+          <pre class="language-bash"><code>git clone https://github.com/marianfoo/ui5-call-action.git
+cd ui5-call-action
+npm install
+npm run deploy             # sets up the SQLite database with sample data
+npm run watch              # starts CAP server on http://localhost:4004</code></pre>
+
+          <h3>2. Verify the service is running:</h3>
+          <p>
+            Open
+            <a href="http://localhost:4004" target="_blank">http://localhost:4004</a>
+            in your browser. You should see:
+          </p>
+          <ul>
+            <li>
+              <strong>BookshopService</strong>
+              :
+              <code>/bookshop</code>
+              - Main service with Books, Chapters, Reviews
+            </li>
+            <li>
+              <strong>ReviewsService</strong>
+              :
+              <code>/reviews</code>
+              - Dedicated review management service
+            </li>
+          </ul>
+
+          <div class="alert alert-warning">
+            <strong>Keep the service running</strong>
+            throughout this tutorial - the mockserver exercises will connect to these real services.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="fiori-application-prerequisites">Fiori Application Prerequisites</h2>
+          <p>
+            This tutorial is based on
+            <strong>Fiori Elements List Report & Object Page</strong>
+            applications. You can use your already existing app, or generate a new one using the tools below.
+          </p>
+
+          <h3>Option 1: SAP Fiori Application Generator (Recommended)</h3>
+          <p>Generate a Fiori Elements app connected to the CAP BookshopService:</p>
+          <ul>
+            <li>
+              <strong>Service Type</strong>
+              : OData URL
+            </li>
+            <li>
+              <strong>Service URL</strong>
+              :
+              <code>http://localhost:4004/bookshop</code>
+            </li>
+            <li>
+              <strong>Main Entity</strong>
+              : Books
+            </li>
+            <li>
+              <strong>Navigation Entity</strong>
+              : chapters (optional)
+            </li>
+            <li>
+              <strong>Template</strong>
+              : List Report Page V4
+            </li>
+          </ul>
+          <p>
+            <strong>Tutorial</strong>
+            :
+            <a href="https://developers.sap.com/tutorials/fiori-tools-generate-project.html" target="_blank">
+              Create App with Fiori Tools
+            </a>
+          </p>
+
+          <h3>Option 2: EasyUI5 Generator</h3>
+          <p>Alternative generator for UI5 applications:</p>
+          <p>
+            <strong>Tutorial</strong>
+            :
+            <a href="https://developers.sap.com/tutorials/cp-cf-sapui5-local-setup.html" target="_blank">
+              Create App with EasyUI5 Generator
+            </a>
+          </p>
+
+          <h3>Generated App Structure</h3>
+          <p>After generation, your app will include:</p>
+          <ul>
+            <li>
+              <code>manifest.json</code>
+              with BookshopService configuration
+            </li>
+            <li>
+              <code>localService/mainService/metadata.xml</code>
+              (downloaded from CAP service)
+            </li>
+            <li>
+              <code>ui5.yaml</code>
+              and
+              <code>ui5-mock.yaml</code>
+              configurations
+            </li>
+          </ul>
+
+          <div class="alert alert-danger">
+            <strong>Important</strong>
+            : Remove backend configuration from
+            <code>ui5-mock.yaml</code>
+            for offline development (explained in Exercise 1)
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="tutorial-repository">Tutorial Repository</h2>
+          <p>
+            Learn to use
+            <strong>@sap-ux/ui5-middleware-fe-mockserver</strong>
+            for offline Fiori development.
+          </p>
+
+          <h3>Documentation & Repository</h3>
+          <ul>
+            <li>
+              <strong>Repo</strong>
+              :
+              <a href="https://github.com/SAP/open-ux-odata" target="_blank">SAP open-ux-odata</a>
+            </li>
+            <li>
+              <strong>Docs</strong>
+              :
+              <a href="https://github.com/SAP/open-ux-odata/blob/main/docs" target="_blank">Open UX OData Docs</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="exercise-structure">Exercise Structure</h2>
+          <p>
+            Each
+            <code>ex{n}/</code>
+            folder contains a Fiori application demonstrating different mockserver capabilities:
+          </p>
+
+          <table class="exercise-table">
+            <thead>
+              <tr>
+                <th>Exercise</th>
+                <th>Port</th>
+                <th>Focus</th>
+                <th>Key Files</th>
+                <th>Test Command</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ex1/</strong></td>
+                <td>8081</td>
+                <td>Generated Data</td>
+                <td><code>ui5-mock.yaml</code></td>
+                <td><code>npm run start:ex1</code></td>
+              </tr>
+              <tr>
+                <td><strong>ex2/</strong></td>
+                <td>8082</td>
+                <td>Custom JSON Data</td>
+                <td><code>data/*.json</code></td>
+                <td><code>npm run start:ex2</code></td>
+              </tr>
+              <tr>
+                <td><strong>ex3/</strong></td>
+                <td>8083</td>
+                <td>JavaScript Logic</td>
+                <td><code>data/Books.js</code></td>
+                <td><code>npm run start:ex3</code></td>
+              </tr>
+              <tr>
+                <td><strong>ex4/</strong></td>
+                <td>8084</td>
+                <td>Multiple Services</td>
+                <td><code>reviewService/</code></td>
+                <td><code>npm run start:ex4</code></td>
+              </tr>
+              <tr>
+                <td><strong>ex5/</strong></td>
+                <td>8085</td>
+                <td>Cross-Service Comm</td>
+                <td><code>Books.js + Reviews.js</code></td>
+                <td><code>npm run start:ex5</code></td>
+              </tr>
+              <tr>
+                <td><strong>ex6/</strong></td>
+                <td>8086</td>
+                <td>Tenant Isolation</td>
+                <td><code>Books-tenant*.json</code></td>
+                <td><code>npm run start:ex6</code></td>
+              </tr>
+              <tr>
+                <td><strong>ex7/</strong></td>
+                <td>8087</td>
+                <td>Error Handling</td>
+                <td><code>EntityContainer.js</code></td>
+                <td><code>npm run start:ex7</code></td>
+              </tr>
+              <tr>
+                <td><strong>ex8/</strong></td>
+                <td>8088</td>
+                <td>wdi5 E2E Testing</td>
+                <td><code>sample.test.js</code></td>
+                <td><code>npm run test:ex8-e2e</code></td>
+              </tr>
+              <tr>
+                <td><strong>ex9/</strong></td>
+                <td>8089</td>
+                <td>OData Recorder</td>
+                <td><code>ui5-record.yaml</code></td>
+                <td><code>npm run start:ex9-record</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="alert alert-info">
+            <strong>Note</strong>
+            : Each exercise runs on its own port to avoid conflicts when running multiple examples simultaneously.
+          </div>
+        </div>
+
+        <div class="exercise-nav">
+          <div>
+            <a href="index.html" class="exercise-nav-prev">← Back to Overview</a>
+          </div>
+          <div>
+            <a href="exercises/basic-setup.html" class="exercise-nav-next">Start Exercise 1: Basic Setup →</a>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="assets/js/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 9: OData Recorder - UI5 FE Mockserver Tutorial</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../index.html" class="nav-link">Overview</a></li>
+            <li class="nav-item"><a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a></li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../summary.html" class="nav-link">Summary & Next Steps</a></li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="main-content">
+        <h1>Exercise 9: Recording Live OData Traffic with ui5-middleware-odata-recorder</h1>
+        <div class="section-intro">
+          Exercise 9 demonstrates how to use
+          <strong>ui5-middleware-odata-recorder</strong>
+          to capture live OData traffic from your backend and automatically generate mockserver-compatible datasets.
+        </div>
+        <div class="content-section">
+          <h2 id="how-it-works">9.1 How It Works</h2>
+
+          <p>
+            <strong>Exercise 9</strong>
+            demonstrates how to use
+            <a href="https://github.com/marianfoo/ui5-middleware-odata-recorder" target="_blank">
+              ui5-middleware-odata-recorder
+            </a>
+            to capture live OData traffic from your backend and automatically generate mockserver-compatible datasets.
+          </p>
+
+          <p>
+            The recorder sits between your UI5 app and backend, intercepting OData responses to create mockserver
+            datasets:
+          </p>
+
+          <div class="alert alert-info">
+            <strong>Recording Phase:</strong>
+            <br />
+            Browser → UI5 Server + Recorder → Backend → Response → JSON Files
+            <br />
+            <br />
+            <strong>Replay Phase:</strong>
+            <br />
+            Browser → UI5 Server + Mockserver → JSON Files (offline)
+          </div>
+
+          <p>
+            You can find the detailed documentation for the recorder
+            <a href="https://github.com/marianfoo/ui5-middleware-odata-recorder/blob/main/README.md" target="_blank">
+              here
+            </a>
+            .
+          </p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="quick-start">9.2 Quick Start</h2>
+
+          <p>
+            Exercise 9 (
+            <code>ex9/</code>
+            ) includes the recorder middleware pre-configured:
+          </p>
+
+          <pre class="language-bash"><code># 1. Ensure your CAP backend is running
+cd ../ui5-call-action
+npm run watch  # Backend on http://localhost:4004
+
+# 2. Start recording mode (captures live traffic)
+cd ex9
+npm run start-record
+
+# 3. Open browser with recording enabled
+# http://localhost:8089/index.html?__record=1
+
+# 4. Click through the app - data gets recorded automatically
+# Navigate to books, open details, try actions, etc.
+
+# 5. Stop server (Ctrl+C) to save recorded data
+
+# 6. Start mockserver mode (uses recorded data)
+npm run start-mock
+
+# 7. Open browser for offline mode
+# http://localhost:8089/index.html</code></pre>
+
+          <h3>From the root directory:</h3>
+          <pre class="language-bash"><code># Record live data
+npm run start:ex9-record
+
+# Use recorded data offline
+npm run start:ex9-mock</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="configuration-overview">9.3 Configuration Overview</h2>
+
+          <p>The recorder uses three UI5 configurations:</p>
+
+          <h3>
+            1.
+            <code>ui5-record.yaml</code>
+            - Recording Mode
+          </h3>
+          <div class="code-header">
+            <span>ex9/ui5-record.yaml</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex9/ui5-record.yaml"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-yaml"><code>server:
+  customMiddleware:
+    # Proxy requests to live backend
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        backend:
+          - path: /bookshop
+            url: http://localhost:4004
+
+    # Recorder captures responses AFTER proxy
+    - name: ui5-middleware-odata-recorder
+      beforeMiddleware: fiori-tools-proxy
+      configuration:
+        services:
+          - alias: mainService
+            version: v4
+            basePath: /bookshop/
+            targetDir: webapp/localService/mainService/data</code></pre>
+
+          <h3>
+            2.
+            <code>ui5-mock.yaml</code>
+            - Offline Replay Mode
+          </h3>
+          <div class="code-header">
+            <span>ex9/ui5-mock.yaml</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex9/ui5-mock.yaml"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-yaml"><code>server:
+  customMiddleware:
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        services:
+          - urlPath: /bookshop
+            metadataPath: ./webapp/localService/mainService/metadata.xml
+            mockdataPath: ./webapp/localService/mainService/data
+            generateMockData: false # Use recorded data only</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="recording-process">9.4 Recording Process</h2>
+
+          <h3>Step 1: Start Recording</h3>
+          <pre class="language-bash"><code>npm run start-record
+# Server starts on http://localhost:8089</code></pre>
+
+          <h3>Step 2: Enable Recording Mode</h3>
+          <p>
+            Open:
+            <a href="http://localhost:8089/index.html?__record=1" target="_blank">
+              http://localhost:8089/index.html?__record=1
+            </a>
+          </p>
+          <p>
+            The
+            <code>?__record=1</code>
+            parameter tells the recorder to start capturing.
+          </p>
+
+          <h3>Step 3: Interact With Your App</h3>
+          <ul>
+            <li>
+              <strong>Navigate:</strong>
+              List Report → Object Page → Sub-pages
+            </li>
+            <li>
+              <strong>Filter & Search:</strong>
+              Use filter bar, search fields
+            </li>
+            <li>
+              <strong>Execute Actions:</strong>
+              Click CAP action buttons (Promote Book, Set Discount, etc.)
+            </li>
+            <li>
+              <strong>Expand Data:</strong>
+              View related entities (chapters, reviews)
+            </li>
+          </ul>
+
+          <div class="alert alert-success">
+            <strong>What Gets Recorded:</strong>
+            <ul>
+              <li>All OData entity responses (Books, Chapters, Reviews, etc.)</li>
+              <li>
+                Service metadata (
+                <code>$metadata</code>
+                )
+              </li>
+              <li>Complete entity data (not just visible fields)</li>
+              <li>
+                Relationship data for
+                <code>$expand</code>
+                operations
+              </li>
+            </ul>
+          </div>
+
+          <h3>Step 4: Review Recorded Data</h3>
+          <pre class="language-bash"><code># Check what was recorded
+ls webapp/localService/mainService/data/
+# Output: Books.json, Chapters.json, Reviews.json, metadata.xml</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="key-features">9.5 Key Features Demonstrated</h2>
+
+          <h3>1. Complete Entity Capture</h3>
+          <p>
+            By default, the recorder removes
+            <code>$select</code>
+            parameters to capture full entities:
+          </p>
+
+          <ul>
+            <li>
+              <strong>UI Request:</strong>
+              <code>GET /Books?$select=ID,title&$top=10</code>
+            </li>
+            <li>
+              <strong>Modified Request:</strong>
+              <code>GET /Books?$top=10</code>
+              (no $select)
+            </li>
+            <li>
+              <strong>Result:</strong>
+              Complete entity data including foreign keys, metadata fields
+            </li>
+          </ul>
+
+          <p>This ensures relationship navigation works offline and UI changes don't break mock data.</p>
+
+          <h3>2. Smart Deduplication</h3>
+          <p>Entities are automatically deduplicated by primary key:</p>
+          <pre class="language-javascript"><code>// Multiple requests for same book only stores once
+GET /Books('3afb35fa-e2c9-40d0-8e22-90e96ead9944'); // First time
+GET /Books('3afb35fa-e2c9-40d0-8e22-90e96ead9944'); // Deduplicated</code></pre>
+
+          <h3>3. Metadata Integration</h3>
+          <p>
+            The recorder automatically captures
+            <code>$metadata</code>
+            to understand the service.
+          </p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="recording-options">9.6 Recording Options</h2>
+
+          <h3>Multi-Tenant Recording</h3>
+          <p>Record different datasets per SAP client:</p>
+
+          <pre class="language-bash"><code># Record tenant 100 data
+http://localhost:8089/index.html?__record=1&sap-client=100
+# Creates: Books-100.json, Chapters-100.json
+
+# Record tenant 200 data
+http://localhost:8089/index.html?__record=1&sap-client=200
+# Creates: Books-200.json, Chapters-200.json</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="benefits-recorder">9.7 Key Benefits of Live Data Recording</h2>
+
+          <ul>
+            <li>
+              <strong>Live Data Capture:</strong>
+              Record real OData responses from backend systems by clicking through apps
+            </li>
+            <li>
+              <strong>Automatic Dataset Generation:</strong>
+              Convert live traffic into mockserver-compatible JSON files
+            </li>
+            <li>
+              <strong>Complete Entity Capture:</strong>
+              Capture full entity data, not just UI-selected fields
+            </li>
+            <li>
+              <strong>Multi-Tenant Recording:</strong>
+              Record different datasets per SAP client for isolated testing
+            </li>
+            <li>
+              <strong>Hybrid Development:</strong>
+              Record from backend → Replay offline for development/testing
+            </li>
+          </ul>
+
+          <div class="alert alert-success">
+            <strong>Workflow:</strong>
+            Record from production/staging → Modify for testing → Replay offline during development
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="practical-use-cases">9.8 Practical Use Cases</h2>
+
+          <h3>1. Production Data Capture</h3>
+          <p>Capture real production patterns safely for development use (with appropriate data anonymization).</p>
+
+          <h3>2. Complex Scenario Recording</h3>
+          <p>Record complete user workflows including all related data for comprehensive offline testing.</p>
+
+          <h3>3. Integration Testing</h3>
+          <p>
+            Record cross-service interactions to ensure offline mockserver accurately simulates real system behavior.
+          </p>
+
+          <h3>4. Performance Testing</h3>
+          <p>Capture large datasets from production systems for performance testing without backend load.</p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="next-steps-recorder">Next Steps</h2>
+          <p>
+            Congratulations! You've completed all 9 exercises of the UI5 FE Mockserver tutorial. Continue to the
+            <strong>Summary & Next Steps</strong>
+            to review your achievements and explore advanced scenarios.
+          </p>
+        </div>
+        <div class="exercise-nav">
+          <div><a href="e2e-testing.html" class="exercise-nav-prev">← Exercise 8: E2E Testing</a></div>
+          <div><a href="../summary.html" class="exercise-nav-next">Summary & Next Steps →</a></div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

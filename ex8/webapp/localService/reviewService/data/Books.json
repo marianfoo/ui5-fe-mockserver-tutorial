@@ -1,0 +1,18 @@
+[
+  {
+    "ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  },
+  {
+    "ID": "7c8f2a1b-d4e5-4c6a-9b7e-1f3a5c8d2e4b",
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  }
+]

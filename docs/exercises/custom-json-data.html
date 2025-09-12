@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 2: Custom JSON Data - UI5 FE Mockserver Tutorial</title>
+    <meta
+      name="description"
+      content="Learn how to replace auto-generated data with controlled, predictable JSON files for consistent testing." />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../index.html" class="nav-link">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a>
+            </li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../summary.html" class="nav-link">Summary & Next Steps</a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/SAP/open-ux-odata" class="nav-link" target="_blank">Open UX OData ↗</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <h1>Exercise 2: Custom Mock Data Files - Controlled Testing Data</h1>
+
+        <div class="section-intro">
+          Exercise 2 shows how to replace auto-generated data with
+          <strong>controlled, predictable JSON files</strong>
+          . This is the most simple setup for test data - you only need to create JSON files in the specified folder and
+          name them with the entity set names like
+          <code>Books.json</code>
+          ,
+          <code>Chapters.json</code>
+          , etc.
+        </div>
+
+        <div class="content-section">
+          <h2 id="why-custom-json">2.1 Why Custom JSON Data?</h2>
+
+          <p>This approach is essential for:</p>
+          <ul>
+            <li>
+              <strong>Consistent testing scenarios</strong>
+              - Same data every time
+            </li>
+            <li>
+              <strong>Foreign key relationships</strong>
+              between entities
+            </li>
+            <li>
+              <strong>Specific test cases</strong>
+              - Data designed for particular UI testing needs
+            </li>
+          </ul>
+
+          <div class="alert alert-success">
+            That is the most simple setup for test data. You only need to create the JSON files in the specified folder
+            and name the json files with the name of the entity set like
+            <code>Books.json</code>
+            ,
+            <code>Chapters.json</code>
+            ,
+            <code>Reviews.json</code>
+            ,
+            <code>Currencies.json</code>
+            , etc.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="implementing-custom-json">2.2 Implementing Custom JSON Mock Data</h2>
+
+          <p>
+            In
+            <code>ex2/</code>
+            , we've replaced random generation with custom JSON files.
+          </p>
+
+          <h3>
+            1. Create mock data directory and files defined in the
+            <code>ui5-mock.yaml</code>
+            file:
+          </h3>
+          <pre class="language-bash"><code>mkdir -p webapp/localService/mainService/data</code></pre>
+
+          <h3>
+            2. Create
+            <code>Books.json</code>
+            with book data:
+          </h3>
+          <p>
+            Create
+            <code>webapp/localService/mainService/data/Books.json</code>
+            :
+          </p>
+          <div class="code-header">
+            <span>ex2/webapp/localService/mainService/data/Books.json</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex2/webapp/localService/mainService/data/Books.json"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-json"><code>[
+  {
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "createdBy": "admin",
+    "modifiedAt": "2025-01-01T00:00:00.000Z",
+    "modifiedBy": "admin",
+    "ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "price": 12.99,
+    "currency_code": "USD",
+    "stock": 50,
+    "description": "A classic novel about the American Dream",
+    "coverUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7a/The_Great_Gatsby_Cover_1925_Retouched.jpg",
+    "HasActiveEntity": false,
+    "HasDraftEntity": false,
+    "IsActiveEntity": true
+  },
+  {
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "createdBy": "admin",
+    "modifiedAt": "2025-01-01T00:00:00.000Z",
+    "modifiedBy": "admin",
+    "ID": "7c8f2a1b-d4e5-4c6a-9b7e-1f3a5c8d2e4b",
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "price": 14.5,
+    "currency_code": "USD",
+    "stock": 35,
+    "description": "A gripping tale of racial injustice and childhood innocence",
+    "coverUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4f/To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg",
+    "HasActiveEntity": false,
+    "HasDraftEntity": false,
+    "IsActiveEntity": true
+  }
+]</code></pre>
+
+          <h3>
+            3. Create
+            <code>Currencies.json</code>
+            :
+          </h3>
+          <p>
+            Create
+            <code>webapp/localService/mainService/data/Currencies.json</code>
+            :
+          </p>
+          <div class="code-header">
+            <span>ex2/webapp/localService/mainService/data/Currencies.json</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex2/webapp/localService/mainService/data/Currencies.json"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-json"><code>[
+  {
+    "code": "EUR",
+    "symbol": "€",
+    "name": "Euro"
+  },
+  {
+    "code": "USD",
+    "symbol": "$",
+    "name": "US Dollar"
+  }
+]</code></pre>
+
+          <h3>4. Update UI5 configuration to disable generated data:</h3>
+          <p>
+            In
+            <code>ui5-mock.yaml</code>
+            , change
+            <code>generateMockData: true</code>
+            to
+            <code>generateMockData: false</code>
+            :
+          </p>
+          <div class="code-header">
+            <span>ex2/ui5-mock.yaml</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex2/ui5-mock.yaml"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-yaml"><code>services:
+  - urlPath: /bookshop
+    metadataPath: ./webapp/localService/mainService/metadata.xml
+    mockdataPath: ./webapp/localService/mainService/data
+    generateMockData: false</code></pre>
+
+          <h3>5. Start the application:</h3>
+          <pre class="language-bash"><code># from folder ex2
+npm run start-mock
+# or from root folder
+npm run start:ex2</code></pre>
+
+          <p>The app shows data from the JSON files; related chapters and reviews appear on the object page.</p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="key-benefits">2.3 Key Benefits</h2>
+
+          <ul>
+            <li>
+              <strong>Predictable Data</strong>
+              : Same content every application restart
+            </li>
+            <li>
+              <strong>Relationship Testing</strong>
+              : Create proper foreign key relationships between entities
+            </li>
+            <li>
+              <strong>Scenario-Specific</strong>
+              : Design data for specific UI test cases
+            </li>
+            <li>
+              <strong>Version Control</strong>
+              : JSON files can be committed and shared with team
+            </li>
+            <li>
+              <strong>Simple Maintenance</strong>
+              : Easy to update and modify test scenarios
+            </li>
+          </ul>
+
+          <div class="alert alert-success">
+            <strong>Result</strong>
+            : Custom JSON files provide consistent, predictable data for testing.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="best-practices">2.4 Best Practices for JSON Mock Data</h2>
+
+          <h3>Entity Relationships</h3>
+          <ul>
+            <li>Use consistent ID formats (UUIDs)</li>
+            <li>Ensure foreign keys match between related entities</li>
+            <li>
+              Include all required CAP/OData system fields (
+              <code>IsActiveEntity</code>
+              ,
+              <code>HasActiveEntity</code>
+              , etc.)
+            </li>
+          </ul>
+
+          <h3>Data Variety</h3>
+          <ul>
+            <li>Include different data types to test UI rendering</li>
+            <li>Add edge cases (very long strings, special characters, null values)</li>
+            <li>Create both draft and active entity states</li>
+          </ul>
+
+          <h3>File Organization</h3>
+          <ul>
+            <li>One JSON file per entity set</li>
+            <li>Use entity set names exactly as they appear in metadata</li>
+            <li>
+              Keep files in the
+              <code>mockdataPath</code>
+              directory specified in
+              <code>ui5-mock.yaml</code>
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="next-steps">Next Steps</h2>
+          <p>
+            <strong>Exercise 3</strong>
+            will show how to use JavaScript files for dynamic data generation and custom action implementations that can
+            handle business logic.
+          </p>
+        </div>
+
+        <div class="exercise-nav">
+          <div>
+            <a href="basic-setup.html" class="exercise-nav-prev">← Exercise 1: Basic Setup</a>
+          </div>
+          <div>
+            <a href="javascript-logic.html" class="exercise-nav-next">Exercise 3: JavaScript Logic →</a>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+    <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+    <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+    <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
+    <edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="ReviewsService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Annotation Term="Core.Links">
+        <Collection>
+          <Record>
+            <PropertyValue Property="rel" String="author"/>
+            <PropertyValue Property="href" String="https://cap.cloud.sap"/>
+          </Record>
+        </Collection>
+      </Annotation>
+      <EntityContainer Name="EntityContainer">
+        <EntitySet Name="Reviews" EntityType="ReviewsService.Reviews">
+          <NavigationPropertyBinding Path="book" Target="Books"/>
+          <NavigationPropertyBinding Path="SiblingEntity" Target="Reviews"/>
+        </EntitySet>
+        <EntitySet Name="Books" EntityType="ReviewsService.Books">
+          <NavigationPropertyBinding Path="SiblingEntity" Target="Books"/>
+        </EntitySet>
+        <ActionImport Name="moderateAllReviews" Action="ReviewsService.moderateAllReviews"/>
+        <ActionImport Name="generateReviewStats" Action="ReviewsService.generateReviewStats"/>
+      </EntityContainer>
+      <EntityType Name="Reviews">
+        <Key>
+          <PropertyRef Name="ID"/>
+          <PropertyRef Name="IsActiveEntity"/>
+        </Key>
+        <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="reviewer" Type="Edm.String" MaxLength="100"/>
+        <Property Name="rating" Type="Edm.Int32"/>
+        <Property Name="comment" Type="Edm.String" MaxLength="1000"/>
+        <NavigationProperty Name="book" Type="ReviewsService.Books">
+          <ReferentialConstraint Property="book_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="book_ID" Type="Edm.Guid"/>
+        <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+        <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+        <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+        <NavigationProperty Name="DraftAdministrativeData" Type="ReviewsService.DraftAdministrativeData" ContainsTarget="true"/>
+        <NavigationProperty Name="SiblingEntity" Type="ReviewsService.Reviews"/>
+      </EntityType>
+      <EntityType Name="Books">
+        <Key>
+          <PropertyRef Name="ID"/>
+          <PropertyRef Name="IsActiveEntity"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="title" Type="Edm.String" MaxLength="100"/>
+        <Property Name="author" Type="Edm.String" MaxLength="100"/>
+        <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+        <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+        <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+        <NavigationProperty Name="DraftAdministrativeData" Type="ReviewsService.DraftAdministrativeData" ContainsTarget="true"/>
+        <NavigationProperty Name="SiblingEntity" Type="ReviewsService.Books"/>
+      </EntityType>
+      <EntityType Name="DraftAdministrativeData">
+        <Key>
+          <PropertyRef Name="DraftUUID"/>
+        </Key>
+        <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="CreatedByUser" Type="Edm.String" MaxLength="256"/>
+        <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean"/>
+        <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+        <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="256"/>
+        <Property Name="InProcessByUser" Type="Edm.String" MaxLength="256"/>
+        <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean"/>
+      </EntityType>
+      <ComplexType Name="return_ReviewsService_Reviews_approveReview">
+        <Property Name="message" Type="Edm.String"/>
+        <Property Name="approved" Type="Edm.Boolean"/>
+        <Property Name="reviewId" Type="Edm.Guid"/>
+      </ComplexType>
+      <ComplexType Name="return_ReviewsService_Reviews_flagAsInappropriate">
+        <Property Name="message" Type="Edm.String"/>
+        <Property Name="flagged" Type="Edm.Boolean"/>
+        <Property Name="reviewId" Type="Edm.Guid"/>
+        <Property Name="flaggedReason" Type="Edm.String"/>
+      </ComplexType>
+      <ComplexType Name="return_ReviewsService_moderateAllReviews">
+        <Property Name="message" Type="Edm.String"/>
+        <Property Name="totalReviews" Type="Edm.Int32"/>
+        <Property Name="approvedCount" Type="Edm.Int32"/>
+        <Property Name="rejectedCount" Type="Edm.Int32"/>
+        <Property Name="moderatedAt" Type="Edm.DateTimeOffset"/>
+      </ComplexType>
+      <ComplexType Name="return_ReviewsService_generateReviewStats">
+        <Property Name="message" Type="Edm.String"/>
+        <Property Name="reportPeriod" Type="ReviewsService.return_ReviewsService_generateReviewStats_reportPeriod"/>
+        <Property Name="statistics" Type="ReviewsService.return_ReviewsService_generateReviewStats_statistics"/>
+      </ComplexType>
+      <ComplexType Name="return_ReviewsService_generateReviewStats_reportPeriod">
+        <Property Name="dateFrom" Type="Edm.Date"/>
+        <Property Name="dateTo" Type="Edm.Date"/>
+      </ComplexType>
+      <ComplexType Name="return_ReviewsService_generateReviewStats_statistics">
+        <Property Name="totalReviews" Type="Edm.Int32"/>
+        <Property Name="averageRating" Type="Edm.Decimal" Scale="variable"/>
+        <Property Name="ratingDistribution" Type="Collection(ReviewsService.return_ReviewsService_generateReviewStats_statistics_ratingDistribution)" Nullable="true"/>
+        <Property Name="topReviewers" Type="Collection(ReviewsService.return_ReviewsService_generateReviewStats_statistics_topReviewers)" Nullable="true"/>
+      </ComplexType>
+      <ComplexType Name="return_ReviewsService_generateReviewStats_statistics_ratingDistribution">
+        <Property Name="rating" Type="Edm.Int32"/>
+        <Property Name="count" Type="Edm.Int32"/>
+      </ComplexType>
+      <ComplexType Name="return_ReviewsService_generateReviewStats_statistics_topReviewers">
+        <Property Name="reviewer" Type="Edm.String"/>
+        <Property Name="reviewCount" Type="Edm.Int32"/>
+        <Property Name="averageRating" Type="Edm.Decimal" Scale="variable"/>
+      </ComplexType>
+      <Action Name="approveReview" IsBound="true">
+        <Parameter Name="in" Type="ReviewsService.Reviews"/>
+        <ReturnType Type="ReviewsService.return_ReviewsService_Reviews_approveReview"/>
+      </Action>
+      <Action Name="flagAsInappropriate" IsBound="true">
+        <Parameter Name="in" Type="ReviewsService.Reviews"/>
+        <Parameter Name="reason" Type="Edm.String"/>
+        <Parameter Name="moderatorNote" Type="Edm.String"/>
+        <ReturnType Type="ReviewsService.return_ReviewsService_Reviews_flagAsInappropriate"/>
+      </Action>
+      <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+        <Parameter Name="in" Type="ReviewsService.Reviews"/>
+        <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+        <ReturnType Type="ReviewsService.Reviews"/>
+      </Action>
+      <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+        <Parameter Name="in" Type="ReviewsService.Books"/>
+        <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+        <ReturnType Type="ReviewsService.Books"/>
+      </Action>
+      <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
+        <Parameter Name="in" Type="ReviewsService.Reviews"/>
+        <ReturnType Type="ReviewsService.Reviews"/>
+      </Action>
+      <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
+        <Parameter Name="in" Type="ReviewsService.Books"/>
+        <ReturnType Type="ReviewsService.Books"/>
+      </Action>
+      <Action Name="draftEdit" IsBound="true" EntitySetPath="in">
+        <Parameter Name="in" Type="ReviewsService.Reviews"/>
+        <Parameter Name="PreserveChanges" Type="Edm.Boolean"/>
+        <ReturnType Type="ReviewsService.Reviews"/>
+      </Action>
+      <Action Name="draftEdit" IsBound="true" EntitySetPath="in">
+        <Parameter Name="in" Type="ReviewsService.Books"/>
+        <Parameter Name="PreserveChanges" Type="Edm.Boolean"/>
+        <ReturnType Type="ReviewsService.Books"/>
+      </Action>
+      <Action Name="moderateAllReviews" IsBound="false">
+        <ReturnType Type="ReviewsService.return_ReviewsService_moderateAllReviews"/>
+      </Action>
+      <Action Name="generateReviewStats" IsBound="false">
+        <Parameter Name="dateFrom" Type="Edm.Date"/>
+        <Parameter Name="dateTo" Type="Edm.Date"/>
+        <Parameter Name="minRating" Type="Edm.Int32"/>
+        <ReturnType Type="ReviewsService.return_ReviewsService_generateReviewStats"/>
+      </Action>
+      <Annotations Target="ReviewsService.Reviews">
+        <Annotation Term="UI.HeaderInfo">
+          <Record Type="UI.HeaderInfoType">
+            <PropertyValue Property="TypeName" String="Review"/>
+            <PropertyValue Property="TypeNamePlural" String="Reviews"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="reviewer"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="Description">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="rating"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.SelectionFields">
+          <Collection>
+            <PropertyPath>reviewer</PropertyPath>
+            <PropertyPath>rating</PropertyPath>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="reviewer"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="rating"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="comment"/>
+            </Record>
+            <Record Type="UI.DataFieldForAction">
+              <PropertyValue Property="Label" String="CAP Approve Review"/>
+              <PropertyValue Property="Action" String="ReviewsService.approveReview"/>
+            </Record>
+            <Record Type="UI.DataFieldForAction">
+              <PropertyValue Property="Label" String="CAP Flag as Inappropriate"/>
+              <PropertyValue Property="Action" String="ReviewsService.flagAsInappropriate"/>
+            </Record>
+            <Record Type="UI.DataFieldForAction">
+              <PropertyValue Property="Label" String="CAP Moderate All Reviews"/>
+              <PropertyValue Property="Action" String="ReviewsService.EntityContainer/moderateAllReviews"/>
+            </Record>
+            <Record Type="UI.DataFieldForAction">
+              <PropertyValue Property="Label" String="CAP Generate Review Stats"/>
+              <PropertyValue Property="Action" String="ReviewsService.EntityContainer/generateReviewStats"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataFieldForAction">
+              <PropertyValue Property="Label" String="CAP Approve Review"/>
+              <PropertyValue Property="Action" String="ReviewsService.approveReview"/>
+            </Record>
+            <Record Type="UI.DataFieldForAction">
+              <PropertyValue Property="Label" String="CAP Flag as Inappropriate"/>
+              <PropertyValue Property="Action" String="ReviewsService.flagAsInappropriate"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.Facets">
+          <Collection>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Review Details"/>
+              <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#ReviewDetails"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="ReviewDetails">
+          <Record Type="UI.FieldGroupType">
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="reviewer"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="rating"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="comment"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="createdAt"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="modifiedAt"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="ReviewsService.EntityContainer/Reviews">
+        <Annotation Term="Common.DraftRoot">
+          <Record Type="Common.DraftRootType">
+            <PropertyValue Property="ActivationAction" String="ReviewsService.draftActivate"/>
+            <PropertyValue Property="EditAction" String="ReviewsService.draftEdit"/>
+            <PropertyValue Property="PreparationAction" String="ReviewsService.draftPrepare"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/createdAt">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Common.Label" String="Created On"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/createdBy">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="User's unique ID"/>
+        <Annotation Term="Common.Label" String="Created By"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/modifiedAt">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Common.Label" String="Changed On"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/modifiedBy">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+        <Annotation Term="Core.Computed" Bool="true"/>
+        <Annotation Term="Core.Description" String="User's unique ID"/>
+        <Annotation Term="Common.Label" String="Changed By"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/ID">
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/reviewer">
+        <Annotation Term="Common.Label" String="Reviewer"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/rating">
+        <Annotation Term="Common.Label" String="Rating"/>
+        <Annotation Term="Validation.Minimum" Int="1"/>
+        <Annotation Term="Validation.Maximum" Int="5"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/comment">
+        <Annotation Term="Common.Label" String="Comment"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/IsActiveEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/HasActiveEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/HasDraftEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Reviews/DraftAdministrativeData">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.EntityContainer/Books">
+        <Annotation Term="Common.DraftRoot">
+          <Record Type="Common.DraftRootType">
+            <PropertyValue Property="ActivationAction" String="ReviewsService.draftActivate"/>
+            <PropertyValue Property="EditAction" String="ReviewsService.draftEdit"/>
+            <PropertyValue Property="PreparationAction" String="ReviewsService.draftPrepare"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="ReviewsService.Books/ID">
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Books/title">
+        <Annotation Term="Common.Label" String="Title"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Books/author">
+        <Annotation Term="Common.Label" String="Author"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Books/IsActiveEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Books/HasActiveEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Books/HasDraftEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.Books/DraftAdministrativeData">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.DraftAdministrativeData">
+        <Annotation Term="Common.Label" String="Draft Administrative Data"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.DraftAdministrativeData/DraftUUID">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+        <Annotation Term="Common.Label" String="Draft (Technical ID)"/>
+        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.DraftAdministrativeData/CreationDateTime">
+        <Annotation Term="Common.Label" String="Draft Created On"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.DraftAdministrativeData/CreatedByUser">
+        <Annotation Term="Common.Label" String="Draft Created By"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.DraftAdministrativeData/DraftIsCreatedByMe">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+        <Annotation Term="Common.Label" String="Draft Created By Me"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.DraftAdministrativeData/LastChangeDateTime">
+        <Annotation Term="Common.Label" String="Draft Last Changed On"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.DraftAdministrativeData/LastChangedByUser">
+        <Annotation Term="Common.Label" String="Draft Last Changed By"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.DraftAdministrativeData/InProcessByUser">
+        <Annotation Term="Common.Label" String="Draft In Process By"/>
+      </Annotations>
+      <Annotations Target="ReviewsService.DraftAdministrativeData/DraftIsProcessedByMe">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+        <Annotation Term="Common.Label" String="Draft In Process By Me"/>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

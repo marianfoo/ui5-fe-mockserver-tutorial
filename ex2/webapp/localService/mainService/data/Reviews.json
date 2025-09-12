@@ -1,0 +1,30 @@
+[
+  {
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "createdBy": "admin",
+    "modifiedAt": "2025-01-01T00:00:00.000Z",
+    "modifiedBy": "admin",
+    "ID": "23a6dd83-a75d-41c5-ad57-2314bc67ed2b",
+    "reviewer": "John Doe",
+    "rating": 5,
+    "comment": "A timeless classic that never gets old!",
+    "book_ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  },
+  {
+    "createdAt": "2024-12-15T00:00:00.000Z",
+    "createdBy": "user2",
+    "modifiedAt": "2024-12-15T00:00:00.000Z",
+    "modifiedBy": "user2",
+    "ID": "34b5cc94-f86c-52e6-be58-3425cd78fe3c",
+    "reviewer": "Jane Reader",
+    "rating": 4,
+    "comment": "Great character development and social commentary.",
+    "book_ID": "7c8f2a1b-d4e5-4c6a-9b7e-1f3a5c8d2e4b",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  }
+]

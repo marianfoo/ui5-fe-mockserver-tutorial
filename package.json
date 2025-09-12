@@ -1,0 +1,55 @@
+{
+  "name": "ui5-fe-mockserver-tutorial",
+  "version": "1.0.0",
+  "description": "Tutorial for using @sap-ux/ui5-middleware-fe-mockserver in SAP Fiori development with interactive website",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000 --no-browser docs/",
+    "dev": "live-server --port=3000 --no-browser docs/",
+    "build": "echo 'No build step required - static files ready'",
+    "deploy": "git add . && git commit -m 'Update tutorial website' && git push origin main",
+    "start:ex1": "npm run start-mock --prefix ex1",
+    "start:ex2": "npm run start-mock --prefix ex2",
+    "start:ex3": "npm run start-mock --prefix ex3",
+    "start:ex4": "npm run start-mock --prefix ex4",
+    "start:ex5": "npm run start-mock --prefix ex5",
+    "start:ex6": "npm run start-mock --prefix ex6",
+    "start:ex6-tenant001": "npm run start-mock-tenant001 --prefix ex6",
+    "start:ex6-tenant002": "npm run start-mock-tenant002 --prefix ex6",
+    "start:ex7": "npm run start-mock --prefix ex7",
+    "start:ex8": "npm run start-mock --prefix ex8",
+    "test:ex8-e2e": "npm run wdi5 --prefix ex8",
+    "start:ex9-record": "npm run start-record --prefix ex9",
+    "start:ex9-mock": "npm run start-mock --prefix ex9",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "ui5",
+    "fiori",
+    "mockserver",
+    "tutorial",
+    "sap",
+    "odata",
+    "testing"
+  ],
+  "author": "Marian Zeis",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "workspaces": [
+    "ex1",
+    "ex2",
+    "ex3",
+    "ex4",
+    "ex5",
+    "ex6",
+    "ex7",
+    "ex8",
+    "ex9"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marianfoo/ui5-fe-mockserver-tutorial.git"
+  }
+}

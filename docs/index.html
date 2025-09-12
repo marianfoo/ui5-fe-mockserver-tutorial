@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UI5 FE Mockserver Tutorial - Interactive Learning Guide</title>
+    <meta
+      name="description"
+      content="Learn @sap-ux/ui5-middleware-fe-mockserver through hands-on exercises covering setup, data strategies, actions, multi-service scenarios, and more." />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="index.html" class="nav-link">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a href="getting-started.html" class="nav-link">Prerequisites & Setup</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="exercises/basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="exercises/odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="summary.html" class="nav-link">Summary & Next Steps</a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/SAP/open-ux-odata" class="nav-link" target="_blank">Open UX OData ↗</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <div class="hero">
+          <h1>UI5 Middleware FE Mockserver in Practice</h1>
+          <p>
+            A comprehensive, hands-on tutorial for mastering
+            <strong>@sap-ux/ui5-middleware-fe-mockserver</strong>
+            with Fiori Elements and beyond. Learn through 9 progressive exercises covering setup, data strategies,
+            actions, multi-service scenarios, tenant isolation, offline E2E testing, and recording real backend traffic.
+          </p>
+          <div class="hero-actions">
+            <a href="getting-started.html" class="btn">Get Started</a>
+            <a href="exercises/basic-setup.html" class="btn btn-secondary">Jump to Exercises</a>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2>Why This Tutorial Matters</h2>
+          <p>
+            The mockserver enables you to develop and test Fiori apps locally and offline with metadata-accurate data,
+            predictable scenarios, and action implementations—without waiting on backend availability. This tutorial
+            distills best practices into small, focused exercises you can run immediately.
+          </p>
+        </div>
+
+        <div class="content-section">
+          <h2>Exercise Overview</h2>
+          <p>
+            Each exercise builds upon the previous one, creating a comprehensive understanding of mockserver
+            capabilities for Fiori development and offline testing.
+          </p>
+
+          <table class="exercise-table">
+            <thead>
+              <tr>
+                <th>Exercise</th>
+                <th>Focus</th>
+                <th>Key Takeaways</th>
+                <th>Port</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <a href="exercises/basic-setup.html" class="exercise-link">1. Basic Setup – Generated Data</a>
+                </td>
+                <td>Zero-config mock data from metadata</td>
+                <td>Start fast; remove backend proxy for true offline; draft simulation</td>
+                <td>8081</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="exercises/custom-json-data.html" class="exercise-link">2. Custom JSON Data</a>
+                </td>
+                <td>Predictable datasets</td>
+                <td>Stable testing scenarios; relationships; consistent IDs and referential keys</td>
+                <td>8082</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="exercises/javascript-logic.html" class="exercise-link">3. JavaScript Logic</a>
+                </td>
+                <td>Dynamic data + actions</td>
+                <td>
+                  Implement
+                  <em>getInitialDataSet</em>
+                  and
+                  <em>executeAction</em>
+                  ; validations; latency simulation
+                </td>
+                <td>8083</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="exercises/multiple-services.html" class="exercise-link">4. Multiple Services</a>
+                </td>
+                <td>Bookshop + Reviews</td>
+                <td>Microservices-style config with distinct metadata and datasets</td>
+                <td>8084</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="exercises/cross-service-communication.html" class="exercise-link">
+                    5. Cross-Service Communication
+                  </a>
+                </td>
+                <td>Service-to-service flows</td>
+                <td>Trigger operations across services (e.g., promotion creates review)</td>
+                <td>8085</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="exercises/tenant-isolation.html" class="exercise-link">6. Context-Based Isolation</a>
+                </td>
+                <td>Tenant-specific data</td>
+                <td>
+                  Use
+                  <em>?sap-client=</em>
+                  to switch tenants; optional tenant-aware logic
+                </td>
+                <td>8086</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="exercises/error-handling.html" class="exercise-link">7. Error Handling</a>
+                </td>
+                <td>Business and system errors</td>
+                <td>Return 400/404/422/500/501 with helpful messages for UI testing</td>
+                <td>8087</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="exercises/e2e-testing.html" class="exercise-link">8. Offline E2E Testing</a>
+                </td>
+                <td>wdi5 + mockserver</td>
+                <td>Reliable CI-ready tests without backend dependency</td>
+                <td>8088</td>
+              </tr>
+              <tr>
+                <td>
+                  <a href="exercises/odata-recorder.html" class="exercise-link">9. Record Live OData</a>
+                </td>
+                <td>ui5-middleware-odata-recorder</td>
+                <td>Capture real backend traffic → generate mock datasets for offline replay</td>
+                <td>8089</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h2>Who Is This For?</h2>
+          <table class="exercise-table">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Fiori Elements developers</strong></td>
+                <td>Develop offline, simulate actions, validate UI flows without backend</td>
+              </tr>
+              <tr>
+                <td><strong>Freestyle UI5 developers</strong></td>
+                <td>Dynamic datasets, custom logic, error scenarios, cross-service patterns</td>
+              </tr>
+              <tr>
+                <td><strong>Test engineers</strong></td>
+                <td>Stable, backend-free E2E tests with wdi5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h2>Quick Start</h2>
+          <div class="alert alert-info">
+            <p>
+              <strong>Ready to begin?</strong>
+              Start with the
+              <a href="getting-started.html">Prerequisites & Setup</a>
+              to configure your development environment, then jump into
+              <a href="exercises/basic-setup.html">Exercise 1</a>
+              for your first hands-on experience with the mockserver.
+            </p>
+          </div>
+
+          <p>
+            All exercises are designed to run locally with the provided CAP backend service. You'll find commands, file
+            locations, and ready-to-run configurations for each scenario.
+          </p>
+        </div>
+
+        <div class="content-section">
+          <h2>Related Resources</h2>
+          <ul>
+            <li>
+              <strong>Devtoberfest Session:</strong>
+              <a
+                href="https://community.sap.com/t5/devtoberfest/ui5-middleware-fe-mockserver-in-practice-setup-use-cases-live-coding/ev-p/14218989"
+                target="_blank">
+                UI5 Middleware FE Mockserver in Practice — Setup, Use Cases, Live Coding
+              </a>
+            </li>
+            <li>
+              <strong>SAP Community Blog:</strong>
+              <a
+                href="https://community.sap.com/t5/technology-blog-posts-by-members/new-tutorial-for-ui5-middleware-fe-mockserver/ba-p/14242854"
+                target="_blank">
+                UI5 Middleware FE Mockserver in Practice — New Tutorial from Devtoberfest
+              </a>
+            </li>
+            <li>
+              <strong>Open UX OData Repository:</strong>
+              <a href="https://github.com/SAP/open-ux-odata" target="_blank">github.com/SAP/open-ux-odata</a>
+            </li>
+            <li>
+              <strong>API Documentation:</strong>
+              <a href="https://github.com/SAP/open-ux-odata/blob/main/docs" target="_blank">API & Guides</a>
+            </li>
+            <li>
+              <strong>OData Traffic Recorder:</strong>
+              <a href="https://github.com/marianfoo/ui5-middleware-odata-recorder" target="_blank">
+                ui5-middleware-odata-recorder
+              </a>
+            </li>
+          </ul>
+        </div>
+      </main>
+    </div>
+
+    <script src="assets/js/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 6: Tenant Isolation - UI5 FE Mockserver Tutorial</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../index.html" class="nav-link">Overview</a></li>
+            <li class="nav-item"><a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a></li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../summary.html" class="nav-link">Summary & Next Steps</a></li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="main-content">
+        <h1>Exercise 6: Context-Based Isolation (Tenants)</h1>
+        <div class="section-intro">
+          This exercise shows tenant-specific data handling. Switch tenants using the
+          <code>?sap-client=</code>
+          query parameter for isolated testing scenarios.
+        </div>
+        <div class="content-section">
+          <h2 id="setup-tenant-data">6.1 Setup Tenant-Specific Data</h2>
+
+          <p>
+            This exercise shows tenant-specific data handling. Switch tenants using the
+            <code>?sap-client=</code>
+            query parameter (for example
+            <code>?sap-client=tenant001</code>
+            or
+            <code>?sap-client=tenant002</code>
+            ). This helps when testing different scenarios without changing data files.
+          </p>
+
+          <h3>1. Context-based isolation works automatically</h3>
+          <p>
+            The mockserver automatically supports tenant-specific data files without requiring any special
+            configuration. Simply create tenant-specific JSON files and access them using the
+            <code>?sap-client=</code>
+            query parameter.
+          </p>
+
+          <div class="alert alert-info">
+            <strong>Automatic Fallback Behavior:</strong>
+            When no tenant-specific JSON file exists (e.g.,
+            <code>Chapters-tenant001.json</code>
+            ), the mockserver automatically falls back to the root JSON file (e.g.,
+            <code>Chapters.json</code>
+            ). This means you only need to create tenant-specific files for entities that should have different data per
+            tenant, while other entities can use the shared root JSON files.
+          </div>
+
+          <h3>2. Create tenant-specific data files:</h3>
+
+          <p>
+            Create
+            <code>webapp/localService/mainService/data/Books-tenant001.json</code>
+            :
+          </p>
+          <div class="code-header">
+            <span>ex6/webapp/localService/mainService/data/Books-tenant001.json</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex6/webapp/localService/mainService/data/Books-tenant001.json"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-json"><code>[
+  {
+    "ID": "tenant001-book-001",
+    "title": "Tenant 1: Enterprise Architecture",
+    "author": "Tech Corp Authors",
+    "price": 89.99,
+    "currency_code": "EUR",
+    "stock": 50,
+    "description": "Enterprise-specific technical book for Tenant 001.",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  }
+]</code></pre>
+
+          <p>
+            Create
+            <code>webapp/localService/mainService/data/Books-tenant002.json</code>
+            :
+          </p>
+          <div class="code-header">
+            <span>ex6/webapp/localService/mainService/data/Books-tenant002.json</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex6/webapp/localService/mainService/data/Books-tenant002.json"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-json"><code>[
+  {
+    "ID": "tenant002-book-001",
+    "title": "Tenant 2: Marketing Strategies",
+    "author": "Marketing Gurus",
+    "price": 45.0,
+    "currency_code": "USD",
+    "stock": 25,
+    "description": "Marketing-focused content for Tenant 002.",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  }
+]</code></pre>
+
+          <h3>3. Fallback Example with Chapters</h3>
+          <p>To demonstrate the automatic fallback behavior, notice that in this exercise we only have:</p>
+          <ul>
+            <li>
+              <code>Books-tenant001.json</code>
+              and
+              <code>Books-tenant002.json</code>
+              (tenant-specific)
+            </li>
+            <li>
+              <code>Chapters.json</code>
+              (shared/root file - no tenant-specific versions)
+            </li>
+          </ul>
+          <p>
+            When you access different tenants, Books data will be tenant-specific, but Chapters data will automatically
+            fall back to the shared
+            <code>Chapters.json</code>
+            file for all tenants. This allows you to mix tenant-specific and shared data seamlessly.
+          </p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="tenant-specific-logic">6.2 Tenant-Specific Business Logic (Optional)</h2>
+
+          <p>
+            Update
+            <code>Books.js</code>
+            to handle tenant-specific logic (not needed if you don't have custom logic):
+          </p>
+          <div class="code-header">
+            <span>ex6/webapp/localService/mainService/data/Books.js</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex6/webapp/localService/mainService/data/Books.js"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-javascript"><code>module.exports = {
+  executeAction: async function (actionDefinition, actionData, keys, odataRequest) {
+    const tenantId = odataRequest.tenantId || 'default';
+    console.log(`Executing ${actionDefinition.name} for tenant: ${tenantId}`);
+
+    switch (actionDefinition.name) {
+      case 'promoteBook':
+        let promoMessage = 'Book promoted!';
+
+        // Tenant-specific promotion logic
+        if (tenantId === 'tenant-tenant001') {
+          promoMessage = 'Enterprise book promoted with technical review!';
+        } else if (tenantId === 'tenant-tenant002') {
+          promoMessage = 'Marketing book promoted with campaign boost!';
+        }
+
+        const entries = await this.base.fetchEntries(keys);
+
+        await this.base.updateEntry(keys, {
+          description: `[${tenantId.toUpperCase()}] PROMOTED: ` + entries[0].description,
+        });
+
+        return {
+          message: promoMessage,
+          promoted: true,
+          tenant: tenantId,
+        };
+
+      default:
+        return this.base.executeAction(actionDefinition, actionData, keys);
+    }
+  },
+};</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="testing-tenants">6.3 Test with Different Tenants</h2>
+
+          <h3>1. Start the application:</h3>
+          <pre class="language-bash"><code># from folder ex6
+npm run start-mock
+# or from root folder
+npm run start:ex6</code></pre>
+
+          <h3>2. Test with different tenants:</h3>
+          <ul>
+            <li>
+              <strong>Default data:</strong>
+              <a href="http://localhost:8086/index.html" target="_blank">http://localhost:8086/index.html</a>
+            </li>
+            <li>
+              <strong>Tenant 001:</strong>
+              <a href="http://localhost:8086/index.html?sap-client=tenant001" target="_blank">
+                http://localhost:8086/index.html?sap-client=tenant001
+              </a>
+            </li>
+            <li>
+              <strong>Tenant 002:</strong>
+              <a href="http://localhost:8086/index.html?sap-client=tenant002" target="_blank">
+                http://localhost:8086/index.html?sap-client=tenant002
+              </a>
+            </li>
+          </ul>
+
+          <div class="alert alert-success">
+            <strong>Result:</strong>
+            Context-based isolation enables multi-tenant testing with separate datasets per client.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="debugging-tenants">6.4 Quick Debugging in VS Code</h2>
+
+          <p>To debug tenant-specific logic:</p>
+          <ol>
+            <li>
+              Open a
+              <strong>JavaScript Debug Terminal</strong>
+              in VS Code.
+            </li>
+            <li>
+              Start the app with mockserver in the debug terminal:
+              <pre class="language-bash"><code>npm run start:ex6</code></pre>
+            </li>
+            <li>
+              Set a breakpoint in
+              <code>webapp/localService/mainService/data/Books.js</code>
+              (for example in
+              <code>getInitialDataSet</code>
+              or
+              <code>executeAction</code>
+              ).
+            </li>
+            <li>
+              Open the app with a tenant parameter, e.g.
+              <code>http://localhost:8086/index.html?sap-client=tenant001</code>
+              .
+            </li>
+            <li>When the service loads or an action is triggered, VS Code pauses at your breakpoint.</li>
+          </ol>
+        </div>
+
+        <div class="content-section">
+          <h2 id="key-benefits-tenants">6.5 Key Benefits of Tenant Isolation</h2>
+
+          <ul>
+            <li>
+              <strong>Multi-Tenant Testing:</strong>
+              Test different customer scenarios without data conflicts
+            </li>
+            <li>
+              <strong>Business Logic Variations:</strong>
+              Different processing rules per tenant for SaaS applications
+            </li>
+            <li>
+              <strong>Data Segregation:</strong>
+              Complete isolation of customer-specific data and configurations
+            </li>
+            <li>
+              <strong>URL-Based Routing:</strong>
+              Easy switching between tenant contexts using query parameters
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="next-steps">Next Steps</h2>
+          <p>
+            <strong>Exercise 7</strong>
+            will show how to implement error handling patterns with proper HTTP status codes and business rule
+            violations for comprehensive UI testing scenarios.
+          </p>
+        </div>
+        <div class="exercise-nav">
+          <div>
+            <a href="cross-service-communication.html" class="exercise-nav-prev">
+              ← Exercise 5: Cross-Service Communication
+            </a>
+          </div>
+          <div><a href="error-handling.html" class="exercise-nav-next">Exercise 7: Error Handling →</a></div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

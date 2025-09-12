@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 3: JavaScript Logic - UI5 FE Mockserver Tutorial</title>
+    <meta
+      name="description"
+      content="Learn how to implement JavaScript-based mock data with custom logic and dynamic data generation." />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../index.html" class="nav-link">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a>
+            </li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../summary.html" class="nav-link">Summary & Next Steps</a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/SAP/open-ux-odata" class="nav-link" target="_blank">Open UX OData ↗</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <h1>Exercise 3: JavaScript-based Mock Data with Custom Logic</h1>
+
+        <div class="section-intro">
+          Now you'll implement JavaScript-based mock data that can generate dynamic data and handle custom actions. Here
+          is the same approach as for the JSON files. You can name a javascript file with the name of the entity set
+          like
+          <code>Books.js</code>
+          ,
+          <code>Chapters.js</code>
+          ,
+          <code>Reviews.js</code>
+          ,
+          <code>Currencies.js</code>
+          , etc.
+        </div>
+
+        <div class="content-section">
+          <h2 id="implement-javascript">3.1 Implement JavaScript Mock Data</h2>
+
+          <p>In this file you can implement several methods to control the behavior of the entity set.</p>
+
+          <ul>
+            <li>
+              Using
+              <code>getInitialDataSet</code>
+              you can generate the initial data set dynamically. This is an alternative approach to create mock data
+              with more control over the data and the logic.
+            </li>
+            <li>
+              Using
+              <code>executeAction</code>
+              you can handle the custom actions. This is the entry point for all actions and functions.
+            </li>
+            <li>
+              You can use base API methods like
+              <code>fetchEntries</code>
+              ,
+              <code>updateEntry</code>
+              ,
+              <code>addEntry</code>
+              , etc. to manipulate the data.
+            </li>
+          </ul>
+
+          <div class="alert alert-info">
+            <strong>API Documentation:</strong>
+            You can look at the
+            <a
+              href="https://github.com/SAP/open-ux-odata/blob/main/docs/MockserverAPI.md#getinitialdataset"
+              target="_blank">
+              Mockserver API documentation
+            </a>
+            for more information about the APIs. More info about
+            <a href="https://github.com/SAP/open-ux-odata/blob/main/docs/MockserverAPI.md#base-api" target="_blank">
+              base APIs
+            </a>
+            .
+          </div>
+
+          <h3>
+            1. Create
+            <code>Books.js</code>
+            with dynamic data generation:
+          </h3>
+          <p>
+            Create
+            <code>webapp/localService/mainService/data/Books.js</code>
+            :
+          </p>
+          <div class="code-header">
+            <span>ex3/webapp/localService/mainService/data/Books.js</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex3/webapp/localService/mainService/data/Books.js"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-javascript"><code>module.exports = {
+  // Generate initial dataset dynamically
+  getInitialDataSet: function (contextId) {
+    const books = [];
+    const authors = ['Jane Austen', 'Mark Twain', 'Charles Dickens', 'Ernest Hemingway', 'Virginia Woolf'];
+    const genres = ['Fiction', 'Mystery', 'Romance', 'Science Fiction', 'Biography'];
+
+    for (let i = 0; i < 20; i++) {
+      const randomAuthor = authors[Math.floor(Math.random() * authors.length)];
+      const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+
+      books.push({
+        ID: `550e8400-e29b-41d4-a716-44665544${String(i).padStart(4, '0')}`,
+        title: `${randomGenre} Book ${i + 1}`,
+        author: randomAuthor,
+        price: Math.floor(Math.random() * 50) + 10,
+        currency_code: Math.random() > 0.5 ? 'EUR' : 'USD',
+        stock: Math.floor(Math.random() * 100),
+        description: `A compelling ${randomGenre.toLowerCase()} story by ${randomAuthor}.`,
+        coverUrl: `https://picsum.photos/300/400?random=${i}`,
+        createdAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
+        createdBy: 'admin',
+        modifiedAt: new Date().toISOString(),
+        modifiedBy: 'admin',
+        IsActiveEntity: true,
+        HasActiveEntity: false,
+        HasDraftEntity: Math.random() > 0.8, // 20% chance of being in draft
+      });
+    }
+    return books;
+  },
+
+  // Handle custom actions
+  executeAction: async function (actionDefinition, actionData, keys) {
+    console.log('Executing action:', actionDefinition.name);
+
+    switch (actionDefinition.name) {
+      case 'setDiscount':
+        // Get current entry and apply discount based on parameters
+        const currentEntries = await this.base.fetchEntries(keys);
+        if (currentEntries.length > 0) {
+          const currentBook = currentEntries[0];
+          const discountPercentage = actionData.percentage || 10; // Default 10% if not provided
+          const discountMultiplier = (100 - discountPercentage) / 100;
+          const newPrice = Math.round(currentBook.price * discountMultiplier * 100) / 100;
+
+          // Update the book with new price
+          await this.base.updateEntry(keys, { price: newPrice });
+
+          return {
+            message: `${discountPercentage}% discount applied to "${currentBook.title}"`,
+            newPrice: newPrice,
+            originalPrice: currentBook.price,
+            reason: actionData.reason || 'Mock discount applied',
+          };
+        }
+        break;
+
+      case 'promoteBook':
+        const entry = await this.base.fetchEntries(keys); // expecting only one entry
+        const firstEntry = entry[0];
+        // Mark book as promoted
+        await this.base.updateEntry(keys, {
+          description: 'PROMOTED: ' + firstEntry.description,
+          stock: firstEntry.stock + 10,
+        });
+        return {
+          message: 'Book has been promoted successfully!',
+          promoted: true,
+        };
+
+      default:
+        this.throwError(`Action ${actionDefinition.name} not implemented`, 501);
+    }
+  },
+};</code></pre>
+
+          <h3>2. Start the application:</h3>
+          <pre class="language-bash"><code>npm run start-mock
+# or from root folder
+npm run start:ex3</code></pre>
+
+          <p>The app shows data generated by the JavaScript file.</p>
+          <p>You can test the actions by clicking on the actions in the action bar.</p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="debugging">3.2 Debugging</h2>
+
+          <p>You can use the debugger to step through the code and see the data in the console:</p>
+          <ul>
+            <li>
+              <strong>IDE Debug Terminal</strong>
+              : Create a JavaScript Debug Terminal in VS Code for debugging
+            </li>
+          </ul>
+
+          <h3>Breakpoint locations:</h3>
+          <ul>
+            <li>
+              <code>getInitialDataSet</code>
+              - Called when application starts and loads initial data
+            </li>
+            <li>
+              <code>executeAction</code>
+              - Called when user clicks action buttons (setDiscount, promoteBook, etc.)
+            </li>
+          </ul>
+
+          <h3>Watching for changes:</h3>
+          <p>
+            You can watch for changes in the data and the JavaScript file by setting
+            <code>watch: true</code>
+            in the
+            <code>ui5-mock.yaml</code>
+            file. This will reload the application when the data or the JavaScript file is changed.
+          </p>
+
+          <div class="alert alert-success">
+            <strong>Result</strong>
+            : JavaScript mock data enables dynamic data generation and custom action implementations.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="simulate-latency">3.3 Simulate Slow Responses (optional)</h2>
+
+          <p>
+            Add a small wait in action handlers to mimic slower backend responses when testing UI behavior (e.g. busy
+            indicators):
+          </p>
+          <pre class="language-javascript"><code>// In webapp/localService/mainService/data/Books.js
+module.exports = {
+  // ...
+  executeAction: async function (actionDefinition, actionData, keys) {
+    // Simulate latency (e.g., 800ms)
+    await new Promise((r) => setTimeout(r, 800))
+
+    switch (actionDefinition.name) {
+      case 'setDiscount':
+        // existing logic
+        break
+      default:
+        this.throwError(`Action ${actionDefinition.name} not implemented`, 501)
+    }
+  },
+}</code></pre>
+
+          <p>Remove the delay once you no longer need to simulate latency.</p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="next-steps">Next Steps</h2>
+          <p>
+            <strong>Exercise 4</strong>
+            will show how to configure multiple OData services for microservices-style applications with distinct
+            metadata and datasets.
+          </p>
+        </div>
+
+        <div class="exercise-nav">
+          <div>
+            <a href="custom-json-data.html" class="exercise-nav-prev">← Exercise 2: Custom JSON Data</a>
+          </div>
+          <div>
+            <a href="multiple-services.html" class="exercise-nav-next">Exercise 4: Multiple Services →</a>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

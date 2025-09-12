@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "3.1"
+metadata:
+  name: com.devtoberfest.mockserver.ex4
+type: application
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertErrors: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    - name: fiori-tools-preview
+      afterMiddleware: fiori-tools-appreload
+      configuration:
+        flp:
+          theme: sap_horizon
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        mountPath: /
+        debug: true
+        watch: true
+        services:
+          # Main bookshop service - handles books, chapters, and primary operations
+          - urlPath: /bookshop
+            alias: bookshop
+            metadataPath: ./webapp/localService/mainService/metadata.xml
+            mockdataPath: ./webapp/localService/mainService/data
+            generateMockData: false
+          # Reviews service - dedicated service for review management
+          - urlPath: /reviews
+            alias: reviews
+            metadataPath: ./webapp/localService/reviewService/metadata.xml
+            mockdataPath: ./webapp/localService/reviewService/data
+            generateMockData: false
+        annotations: []

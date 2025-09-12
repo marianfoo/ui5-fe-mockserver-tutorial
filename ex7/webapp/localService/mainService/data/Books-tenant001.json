@@ -1,0 +1,19 @@
+[
+  {
+    "ID": "tenant001-book-001",
+    "title": "Tenant 1: Enterprise Architecture",
+    "author": "Tech Corp Authors",
+    "price": 89.99,
+    "currency_code": "EUR",
+    "stock": 50,
+    "description": "Enterprise-specific technical book for Tenant 001.",
+    "coverUrl": "https://picsum.photos/300/400?random=tenant001",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "createdBy": "tenant001-admin",
+    "modifiedAt": "2025-01-01T00:00:00.000Z",
+    "modifiedBy": "tenant001-admin",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  }
+]

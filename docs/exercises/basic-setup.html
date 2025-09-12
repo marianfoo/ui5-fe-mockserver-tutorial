@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 1: Basic Setup - UI5 FE Mockserver Tutorial</title>
+    <meta
+      name="description"
+      content="Learn the basic setup of UI5 FE Mockserver with auto-generated mock data from metadata." />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../index.html" class="nav-link">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a>
+            </li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../summary.html" class="nav-link">Summary & Next Steps</a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/SAP/open-ux-odata" class="nav-link" target="_blank">Open UX OData ↗</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <h1>Exercise 1: Basic Setup - Generated Mock Data</h1>
+
+        <div class="section-intro">
+          Exercise 1 shows the basic mockserver setup with auto-generated data. The app in
+          <code>ex1/</code>
+          was created using the SAP Fiori Application Generator and demonstrates zero-configuration mock data generation
+          from metadata.
+        </div>
+
+        <div class="content-section">
+          <h2 id="understanding-generated-app">1.1 Understanding the Generated App Structure</h2>
+
+          <div class="alert alert-info">
+            <strong>New to Fiori Apps?</strong>
+            If you need to generate your own app, see the
+            <a href="../getting-started.html#fiori-application-prerequisites">Fiori Application Prerequisites</a>
+            section for step-by-step guidance using Fiori Tools or EasyUI5 Generator.
+          </div>
+
+          <p><strong>What's in ex1/:</strong></p>
+          <ul>
+            <li>
+              <strong>Fiori Elements app</strong>
+              generated from BookshopService
+            </li>
+            <li>
+              <strong>Automatic mock data generation</strong>
+              - no custom data files needed
+            </li>
+            <li>
+              <strong>UI5 middleware configuration</strong>
+              for mockserver integration
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="key-configuration">1.2 Key Configuration Files</h2>
+
+          <h3>
+            📁
+            <code>ex1/ui5-mock.yaml</code>
+            - The Core Mockserver Configuration:
+          </h3>
+          <div class="code-header">
+            <span>ex1/ui5-mock.yaml</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex1/ui5-mock.yaml"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-yaml"><code>- name: sap-fe-mockserver
+  beforeMiddleware: csp
+  configuration:
+    mountPath: /
+    services:
+      - urlPath: /bookshop # Intercept calls to /bookshop
+        metadataPath: ./webapp/localService/mainService/metadata.xml # Service definition
+        mockdataPath: ./webapp/localService/mainService/data # Data folder (empty for now)
+        generateMockData: true # Auto-generate mock data
+    annotations: []</code></pre>
+
+          <h3>Key Points:</h3>
+          <ul>
+            <li>
+              <strong><code>generateMockData: true</code></strong>
+              - Mockserver creates data automatically based on metadata
+            </li>
+            <li>
+              <strong><code>urlPath: /bookshop</code></strong>
+              - Intercepts all calls to the BookshopService
+            </li>
+            <li>
+              <strong><code>metadataPath</code></strong>
+              - Points to the real service metadata, created on app generation
+            </li>
+            <li>
+              <strong><code>mockdataPath</code></strong>
+              - Directory for custom data files (we'll use this in later exercises)
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="removing-backend-config">1.3 Important: Removing Backend Configuration for Offline Development</h2>
+
+          <div class="alert alert-danger">
+            <strong>Critical Step for Generated Apps</strong>
+            : When Fiori tools generates an app, it includes backend configuration in
+            <code>ui5-mock.yaml</code>
+            that still connects to the real service. For true offline development, you must remove this configuration.
+          </div>
+
+          <p>
+            <strong>
+              Generated apps include this in
+              <code>ui5-mock.yaml</code>
+              (REMOVE THIS):
+            </strong>
+          </p>
+          <pre class="language-yaml"><code># ❌ Remove this section for offline mockserver development
+backend:
+  - path: /bookshop
+    url: http://localhost:4004</code></pre>
+
+          <h3>Why remove it?</h3>
+          <ul>
+            <li>
+              With backend configuration present, the app bypasses the mockserver and connects to the real service
+            </li>
+            <li>This defeats the purpose of offline development and testing</li>
+            <li>Removes the backend dependency that the mockserver is designed to eliminate</li>
+          </ul>
+
+          <div class="alert alert-success">
+            <strong>In this tutorial</strong>
+            : All
+            <code>ui5-mock.yaml</code>
+            files have been pre-configured for offline development with backend sections removed.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="running-the-app">1.4 What You'll See When Running</h2>
+
+          <h3>1. Start the app:</h3>
+          <pre class="language-bash"><code>npm run start:ex1</code></pre>
+
+          <h3>2. Explore the generated data:</h3>
+          <ul>
+            <li>
+              <strong>List Report</strong>
+              : Shows books with generated titles, authors, prices
+            </li>
+            <li>
+              <strong>Generated variety</strong>
+              : Different data types (strings, numbers, dates, booleans)
+            </li>
+            <li>
+              <strong>Draft entries</strong>
+              : Some rows have blue left border (draft mode simulation)
+            </li>
+          </ul>
+
+          <h3>3. Test the actions:</h3>
+          <ul>
+            <li>
+              <strong>CAP buttons work</strong>
+              : promoteBook, setDiscount, generateReport, refreshCatalog
+            </li>
+            <li>
+              <strong>Parameter dialogs</strong>
+              : Actions with parameters show input forms
+            </li>
+            <li>
+              <strong>No responses</strong>
+              : Actions do not work (we will implement the actions in the next exercises)
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="understanding-auto-generated">1.5 Understanding Auto-Generated Data</h2>
+
+          <p>The mockserver analyzes the metadata and creates mock data:</p>
+          <pre class="language-javascript"><code>// How the mockserver interprets metadata:
+String properties (title, author) → "Generated String 1", "Generated String 2"
+Decimal properties (price) → Random numbers with correct precision
+Integer properties (stock) → Random whole numbers
+Date properties (createdAt) → Current date with variations
+Boolean properties (IsActiveEntity) → true/false
+UUID properties (ID) → Proper GUID format</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="key-learning-points">1.6 Key Learning Points</h2>
+
+          <h3>✅ Advantages:</h3>
+          <ul>
+            <li>
+              <strong>Zero Configuration</strong>
+              : Works immediately without any custom setup
+            </li>
+            <li>
+              <strong>Metadata-Driven</strong>
+              : Data structure matches your real service exactly
+            </li>
+            <li>
+              <strong>Action Support</strong>
+              : All OData actions and functions are recognized (even if they fail)
+            </li>
+            <li>
+              <strong>Draft Simulation</strong>
+              : Simulates draft editing
+            </li>
+          </ul>
+
+          <h3>⚠️ Limitations:</h3>
+          <ul>
+            <li>Data is random and changes on restart</li>
+            <li>Actions don't have business logic</li>
+            <li>No cross-entity business rules</li>
+            <li>Can't simulate specific scenarios consistently</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="next-steps">Next Steps</h2>
+          <p>
+            <strong>Exercise 2</strong>
+            will show how to replace generated data with your own controlled JSON files for predictable testing
+            scenarios.
+          </p>
+        </div>
+
+        <div class="exercise-nav">
+          <div>
+            <a href="../getting-started.html" class="exercise-nav-prev">← Prerequisites & Setup</a>
+          </div>
+          <div>
+            <a href="custom-json-data.html" class="exercise-nav-next">Exercise 2: Custom JSON Data →</a>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

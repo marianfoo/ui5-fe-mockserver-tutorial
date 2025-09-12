@@ -1,0 +1,26 @@
+[
+  {
+    "ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "author": "F. Scott Fitzgerald",
+    "currency_code": "USD",
+    "price": 12.99,
+    "stock": 50,
+    "title": "The Great Gatsby",
+    "HasDraftEntity": false,
+    "HasActiveEntity": false,
+    "DraftAdministrativeData": null,
+    "IsActiveEntity": true
+  },
+  {
+    "ID": "7c8f2a1b-d4e5-4c6a-9b7e-1f3a5c8d2e4b",
+    "author": "Harper Lee",
+    "currency_code": "USD",
+    "price": 14.5,
+    "stock": 35,
+    "title": "To Kill a Mockingbird",
+    "HasDraftEntity": false,
+    "HasActiveEntity": false,
+    "DraftAdministrativeData": null,
+    "IsActiveEntity": true
+  }
+]

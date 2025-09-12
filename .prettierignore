@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+**/dist/
+target/
+**/target/
+
+# Generated files
+gen/
+**/gen/
+
+# SAP specific files that should not be formatted
+*.xml
+**/*.xml
+*.properties
+**/*.properties
+*.sample
+**/*.sample
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Package files
+package-lock.json
+**/package-lock.json
+
+# Archive files
+*.zip
+*.tar.gz
+*.mtar
+
+# Temporary files
+.tmp/
+*.tmp
+*.temp
+
+# Test coverage
+coverage/
+**/coverage/
+
+# Images
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.ico

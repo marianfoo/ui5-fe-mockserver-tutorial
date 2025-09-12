@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 5: Cross-Service Communication - UI5 FE Mockserver Tutorial</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../index.html" class="nav-link">Overview</a></li>
+            <li class="nav-item"><a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a></li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../summary.html" class="nav-link">Summary & Next Steps</a></li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="main-content">
+        <h1>Exercise 5: Cross-Service Communication</h1>
+        <div class="section-intro">
+          Cross-service communication simulates real microservices architectures where services need to synchronize data
+          and trigger actions across domains.
+        </div>
+        <div class="content-section">
+          <h2 id="understanding-cross-service">5.1 Understanding Cross-Service Scenarios</h2>
+
+          <p>Cross-service communication simulates real microservices architectures where:</p>
+
+          <ul>
+            <li>
+              <strong>BookshopService</strong>
+              handles core business operations (book promotion, inventory)
+            </li>
+            <li>
+              <strong>ReviewsService</strong>
+              manages review workflows (approval, moderation, statistics)
+            </li>
+            <li>Services need to synchronize data and trigger actions across domains</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="implement-cross-service">5.2 Implement Cross-Service Communication</h2>
+
+          <h3>1. Enhanced Books.js with cross-service functionality:</h3>
+          <p>
+            Update
+            <code>webapp/localService/mainService/data/Books.js</code>
+            to demonstrate how book operations can trigger review-related actions:
+          </p>
+          <div class="code-header">
+            <span>ex5/webapp/localService/mainService/data/Books.js</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex5/webapp/localService/mainService/data/Books.js"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-javascript"><code>module.exports = {
+  getInitialDataSet: function (contextId) {
+    // ... existing code from previous exercise ...
+  },
+
+  executeAction: function (actionDefinition, actionData, keys) {
+    console.log('Executing action:', actionDefinition.name);
+
+    switch (actionDefinition.name) {
+      case 'setDiscount':
+        // ... existing setDiscount code ...
+        break;
+
+      case 'promoteBook':
+        console.log('📚 Starting book promotion with cross-service integration...');
+
+        // Step 1: Update book in main service
+        const bookEntries = await this.base.fetchEntries(keys);
+        const bookData = bookEntries[0];
+        if (!bookData) {
+          this.throwError('Book not found', 404);
+          return;
+        }
+
+        // Update the book with promotion status
+        await this.base.updateEntry(keys, {
+          description: 'PROMOTED: ' + bookData.description,
+          stock: bookData.stock + 10, // Add promotional inventory
+        });
+
+        console.log('✅ Book updated in BookshopService');
+
+        // Step 2: Cross-service communication to ReviewsService
+        // Add a promotional review via the reviews service
+        this.base
+          .getEntityInterface('Reviews', 'reviews')
+          .then(function (reviewService) {
+            if (reviewService) {
+              console.log('🔄 Connecting to ReviewsService...');
+
+              return reviewService.addEntry({
+                ID: `promo-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+                book_ID: keys.ID, // Link to the promoted book
+                reviewer: 'Marketing Team',
+                rating: 5, // Promotional reviews are always 5-star
+                comment: `📈 PROMOTIONAL: "${bookData.title}" has been featured! Don't miss this amazing read.`,
+                createdAt: new Date().toISOString(),
+                createdBy: 'system',
+                modifiedAt: new Date().toISOString(),
+                modifiedBy: 'system',
+                IsActiveEntity: true,
+                HasActiveEntity: false,
+                HasDraftEntity: false,
+              });
+            }
+          })
+          .then(function () {
+            console.log('✅ Cross-service promotional review added to ReviewsService');
+          })
+          .catch(function (error) {
+            console.error('❌ Failed to add cross-service review:', error);
+            // Don't fail the whole operation if review creation fails
+          });
+
+        return {
+          message: 'Book promoted successfully with cross-service review integration!',
+          promoted: true,
+          crossServiceIntegration: 'Reviews service notified',
+        };
+
+      default:
+        this.throwError(`Action ${actionDefinition.name} not implemented`, 501);
+    }
+  },
+};</code></pre>
+
+          <h3>2. Start the application:</h3>
+          <pre class="language-bash"><code># from folder ex5
+npm run start-mock
+# or from root folder
+npm run start:ex5</code></pre>
+
+          <p>
+            If you now start the app, in the List Report the data from the
+            <code>getInitialDataSet</code>
+            method of the
+            <code>Books.js</code>
+            file is shown.
+          </p>
+          <p>
+            If you select a book in the List Report and press the Button
+            <code>CAP Promote Book</code>
+            , the book is promoted and a promotional review is created in the
+            <code>ReviewsService</code>
+            .
+          </p>
+
+          <p>
+            As we did not integrate the Service in the List Report, we can check the created review by opening the URL
+            <a href="http://localhost:8085/reviews/Reviews" target="_blank">http://localhost:8085/reviews/Reviews</a>
+            in the browser.
+          </p>
+          <p>There should be now at least one entry with the comment:</p>
+          <pre
+            class="language-json"><code>"comment": "📈 PROMOTIONAL: \"Biography Book 1\" has been featured! Don't miss this amazing read."</code></pre>
+
+          <div class="alert alert-success">
+            <strong>Result:</strong>
+            Cross-service communication demonstrates data synchronization between services.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="key-benefits">5.3 Key Benefits of Cross-Service Communication</h2>
+
+          <ul>
+            <li>
+              <strong>Realistic Integration Patterns:</strong>
+              Book promotions triggering review creation mirrors real microservices workflows
+            </li>
+            <li>
+              <strong>Audit Trails:</strong>
+              System activities are logged across service boundaries for compliance
+            </li>
+            <li>
+              <strong>Service Validation:</strong>
+              Cross-service data integrity checks ensure consistent state
+            </li>
+            <li>
+              <strong>Error Resilience:</strong>
+              Graceful handling of cross-service failures maintains system stability
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="next-steps">Next Steps</h2>
+          <p>
+            <strong>Exercise 6</strong>
+            will show how to implement context-based isolation (multi-tenancy) where different tenants can have separate
+            datasets and business logic variations using the
+            <code>?sap-client=</code>
+            query parameter.
+          </p>
+        </div>
+        <div class="exercise-nav">
+          <div><a href="multiple-services.html" class="exercise-nav-prev">← Exercise 4: Multiple Services</a></div>
+          <div><a href="tenant-isolation.html" class="exercise-nav-next">Exercise 6: Tenant Isolation →</a></div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

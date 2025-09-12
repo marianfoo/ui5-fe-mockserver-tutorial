@@ -1,0 +1,36 @@
+[
+  {
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "createdBy": "admin",
+    "modifiedAt": "2025-01-01T00:00:00.000Z",
+    "modifiedBy": "admin",
+    "ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "price": 12.99,
+    "currency_code": "USD",
+    "stock": 50,
+    "description": "A classic novel about the American Dream",
+    "coverUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7a/The_Great_Gatsby_Cover_1925_Retouched.jpg",
+    "HasActiveEntity": false,
+    "HasDraftEntity": false,
+    "IsActiveEntity": true
+  },
+  {
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "createdBy": "admin",
+    "modifiedAt": "2025-01-01T00:00:00.000Z",
+    "modifiedBy": "admin",
+    "ID": "7c8f2a1b-d4e5-4c6a-9b7e-1f3a5c8d2e4b",
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "price": 14.5,
+    "currency_code": "USD",
+    "stock": 35,
+    "description": "A gripping tale of racial injustice and childhood innocence",
+    "coverUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4f/To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg",
+    "HasActiveEntity": false,
+    "HasDraftEntity": false,
+    "IsActiveEntity": true
+  }
+]

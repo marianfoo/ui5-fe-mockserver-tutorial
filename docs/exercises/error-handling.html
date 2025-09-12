@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 7: Error Handling - UI5 FE Mockserver Tutorial</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../index.html" class="nav-link">Overview</a></li>
+            <li class="nav-item"><a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a></li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../summary.html" class="nav-link">Summary & Next Steps</a></li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="main-content">
+        <h1>Exercise 7: Error Handling and Actions</h1>
+        <div class="section-intro">
+          This exercise shows simple error handling patterns that you can extend for your own applications with various
+          HTTP status codes.
+        </div>
+        <div class="content-section">
+          <h2 id="basic-error-examples">7.1 Basic Error Handling Examples</h2>
+
+          <p>
+            This exercise shows simple error handling patterns that you can extend for your own applications. We'll
+            implement basic validation and error simulation in the mockserver.
+          </p>
+
+          <p>
+            Update
+            <code>webapp/localService/mainService/data/Books.js</code>
+            with basic error examples:
+          </p>
+          <div class="code-header">
+            <span>ex7/webapp/localService/mainService/data/Books.js</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex7/webapp/localService/mainService/data/Books.js"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-javascript"><code>case 'setDiscount':
+  // Simple validation example - discount cannot exceed 90%
+  if (actionData.percentage > 90) {
+    this.throwError('Discount cannot exceed 90%', 400, {
+      error: {
+        code: 'INVALID_DISCOUNT',
+        message: 'Company policy: Maximum discount is 90%',
+      },
+    });
+  }
+
+  // Simple 500 error simulation - uncomment to test
+  // if (actionData.percentage === 42) {
+  //   this.throwError('Simulated server error', 500);
+  // }
+
+  // Normal business logic continues...
+  const currentEntries = await this.base.fetchEntries(keys);
+  // ... rest of discount logic</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="common-error-types">7.2 Common Error Types</h2>
+
+          <p>The mockserver supports standard HTTP error codes:</p>
+
+          <table class="exercise-table">
+            <thead>
+              <tr>
+                <th>Status Code</th>
+                <th>Error Type</th>
+                <th>Use Case</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>400</strong></td>
+                <td>Bad Request</td>
+                <td>Input validation failures</td>
+                <td>Invalid discount percentage</td>
+              </tr>
+              <tr>
+                <td><strong>404</strong></td>
+                <td>Not Found</td>
+                <td>Entity doesn't exist</td>
+                <td>Book ID not found</td>
+              </tr>
+              <tr>
+                <td><strong>422</strong></td>
+                <td>Unprocessable Entity</td>
+                <td>Business rule violations</td>
+                <td>Stock insufficient for operation</td>
+              </tr>
+              <tr>
+                <td><strong>500</strong></td>
+                <td>Internal Server Error</td>
+                <td>System failures</td>
+                <td>Database connection failed</td>
+              </tr>
+              <tr>
+                <td><strong>501</strong></td>
+                <td>Not Implemented</td>
+                <td>Action not supported</td>
+                <td>Unimplemented action name</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h2 id="complete-error-implementation">7.3 Complete Error Implementation Example</h2>
+
+          <p>Here's a more comprehensive example showing various error scenarios:</p>
+
+          <pre class="language-javascript"><code>module.exports = {
+  executeAction: async function (actionDefinition, actionData, keys, odataRequest) {
+    console.log('Executing action:', actionDefinition.name);
+
+    switch (actionDefinition.name) {
+      case 'setDiscount':
+        // Input validation - 400 Bad Request
+        if (!actionData.percentage || actionData.percentage < 0) {
+          this.throwError('Discount percentage is required and must be positive', 400, {
+            error: {
+              code: 'INVALID_INPUT',
+              message: 'Percentage must be a positive number',
+            },
+          });
+        }
+
+        // Business rule validation - 400 Bad Request
+        if (actionData.percentage > 90) {
+          this.throwError('Discount cannot exceed 90%', 400, {
+            error: {
+              code: 'INVALID_DISCOUNT',
+              message: 'Company policy: Maximum discount is 90%',
+            },
+          });
+        }
+
+        // Entity not found - 404 Not Found
+        const currentEntries = await this.base.fetchEntries(keys);
+        if (!currentEntries || currentEntries.length === 0) {
+          this.throwError('Book not found', 404, {
+            error: {
+              code: 'ENTITY_NOT_FOUND',
+              message: `Book with ID ${keys.ID} does not exist`,
+            },
+          });
+        }
+
+        // Business logic validation - 422 Unprocessable Entity
+        const currentBook = currentEntries[0];
+        if (currentBook.stock <= 0) {
+          this.throwError('Cannot apply discount to out-of-stock items', 422, {
+            error: {
+              code: 'BUSINESS_RULE_VIOLATION',
+              message: 'Discounts are not allowed for items with zero stock',
+            },
+          });
+        }
+
+        // Simulated system error - 500 Internal Server Error
+        if (actionData.percentage === 42) {
+          this.throwError('Simulated server error for testing', 500, {
+            error: {
+              code: 'INTERNAL_ERROR',
+              message: 'Database connection temporarily unavailable',
+            },
+          });
+        }
+
+        // Normal business logic
+        const discountMultiplier = (100 - actionData.percentage) / 100;
+        const newPrice = Math.round(currentBook.price * discountMultiplier * 100) / 100;
+
+        await this.base.updateEntry(keys, { price: newPrice });
+
+        return {
+          message: `${actionData.percentage}% discount applied successfully`,
+          newPrice: newPrice,
+          originalPrice: currentBook.price,
+          discountAmount: currentBook.price - newPrice,
+        };
+
+      case 'promoteBook':
+        // ... existing promote logic ...
+        break;
+
+      default:
+        // 501 Not Implemented
+        this.throwError(`Action ${actionDefinition.name} not implemented`, 501, {
+          error: {
+            code: 'NOT_IMPLEMENTED',
+            message: `The action '${actionDefinition.name}' is not supported by this service`,
+          },
+        });
+    }
+  },
+};</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="testing-error-scenarios">7.4 Testing Error Scenarios</h2>
+
+          <h3>Start the application:</h3>
+          <pre class="language-bash"><code># from folder ex7
+npm run start-mock
+# or from root folder
+npm run start:ex7</code></pre>
+
+          <h3>Test different error conditions:</h3>
+          <ol>
+            <li>
+              <strong>Test 400 Bad Request:</strong>
+              Try discount > 90% → Returns validation error with clear message
+            </li>
+            <li>
+              <strong>Test 422 Business Rule:</strong>
+              Apply discount to out-of-stock book → Returns business rule violation
+            </li>
+            <li>
+              <strong>Test 500 Internal Error:</strong>
+              Use percentage = 42 → Returns simulated server error
+            </li>
+            <li>
+              <strong>Test 501 Not Implemented:</strong>
+              Try unimplemented action → Returns "not supported" message
+            </li>
+            <li>
+              <strong>Test 404 Not Found:</strong>
+              Use invalid book ID → Returns "entity not found" error
+            </li>
+          </ol>
+
+          <div class="alert alert-warning">
+            <strong>UI Testing:</strong>
+            These error scenarios help you test how your Fiori app handles different error conditions, improving the
+            user experience with proper error messages and fallback behaviors.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="error-best-practices">7.5 Error Handling Best Practices</h2>
+
+          <ul>
+            <li>
+              <strong>Meaningful Error Codes:</strong>
+              Use consistent, descriptive error codes that frontend can handle appropriately
+            </li>
+            <li>
+              <strong>User-Friendly Messages:</strong>
+              Provide clear, actionable error messages for end users
+            </li>
+            <li>
+              <strong>Structured Error Objects:</strong>
+              Include additional context like field names, constraints, or suggestions
+            </li>
+            <li>
+              <strong>Appropriate HTTP Status:</strong>
+              Use correct status codes that match the error scenario
+            </li>
+            <li>
+              <strong>Consistent Format:</strong>
+              Maintain consistent error response structure across all actions
+            </li>
+          </ul>
+
+          <div class="alert alert-success">
+            <strong>Result:</strong>
+            Basic error handling patterns provide a foundation for comprehensive UI testing with realistic error
+            scenarios.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="next-steps">Next Steps</h2>
+          <p>
+            <strong>Exercise 8</strong>
+            will show how to integrate the mockserver with wdi5 for offline end-to-end testing, enabling reliable CI/CD
+            pipelines without backend dependencies.
+          </p>
+        </div>
+        <div class="exercise-nav">
+          <div><a href="tenant-isolation.html" class="exercise-nav-prev">← Exercise 6: Tenant Isolation</a></div>
+          <div><a href="e2e-testing.html" class="exercise-nav-next">Exercise 8: E2E Testing →</a></div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+[
+  {
+    "ID": "23a6dd83-a75d-41c5-ad57-2314bc67ed2b",
+    "reviewer": "John Doe",
+    "rating": 5,
+    "comment": "A timeless classic that never gets old!",
+    "book_ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "createdBy": "user1",
+    "modifiedAt": "2024-01-15T10:30:00Z",
+    "modifiedBy": "user1",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  },
+  {
+    "ID": "34b7ee94-f86c-52e6-be58-3425cd78fe3c",
+    "reviewer": "Jane Smith",
+    "rating": 4,
+    "comment": "Great character development and storytelling.",
+    "book_ID": "7c8f2a1b-d4e5-4c6a-9b7e-1f3a5c8d2e4b",
+    "createdAt": "2024-01-20T14:45:00Z",
+    "createdBy": "user2",
+    "modifiedAt": "2024-01-20T14:45:00Z",
+    "modifiedBy": "user2",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  },
+  {
+    "ID": "45c8ff05-097d-63f7-cf69-4536de89df5d",
+    "reviewer": "Book Lover",
+    "rating": 3,
+    "comment": "Decent read, but could be better paced.",
+    "book_ID": "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    "createdAt": "2024-02-01T09:15:00Z",
+    "createdBy": "user3",
+    "modifiedAt": "2024-02-01T09:15:00Z",
+    "modifiedBy": "user3",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  }
+]

@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 8: E2E Testing - UI5 FE Mockserver Tutorial</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../index.html" class="nav-link">Overview</a></li>
+            <li class="nav-item"><a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a></li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item"><a href="../summary.html" class="nav-link">Summary & Next Steps</a></li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="main-content">
+        <h1>Exercise 8: Offline E2E Testing with wdi5 and Mockserver</h1>
+        <div class="section-intro">
+          Exercise 8 demonstrates offline E2E testing with wdi5 (WebDriverIO UI5 Service) for reliable CI/CD integration
+          without backend dependencies.
+        </div>
+        <div class="content-section">
+          <h2 id="setup-instructions">8.1 Setup Instructions</h2>
+
+          <p>
+            Exercise 8 (
+            <code>ex8/</code>
+            ) is a copy of
+            <code>ex7/</code>
+            enhanced with wdi5 testing capabilities.
+          </p>
+
+          <h3>Step 1: Copy Base App</h3>
+          <pre class="language-bash"><code># Copy ex7 to ex8 (already done in this tutorial)
+cp -r ex7/ ex8/
+cd ex8</code></pre>
+
+          <h3>Step 2: Initialize wdi5</h3>
+          <pre class="language-bash"><code># Initialize wdi5 with latest version
+npm init wdi5@latest
+
+# Install additional UI5 service dependency
+npm install --save-dev wdio-ui5-service</code></pre>
+
+          <h3>Step 3: Run the Tests</h3>
+
+          <h4>From the ex8 directory:</h4>
+          <pre class="language-bash"><code># Start the app with mockserver
+npm run start-mock
+
+# In a separate terminal, run e2e tests
+npm run wdi5</code></pre>
+
+          <h4>From the root directory:</h4>
+          <pre class="language-bash"><code># Start ex8 with mockserver
+npm run start:ex8
+
+# Run e2e tests
+npm run test:ex8-e2e</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="test-architecture">8.2 Simple Test Architecture</h2>
+
+          <p>
+            The test suite (
+            <code>webapp/test/e2e/sample.test.js</code>
+            ) demonstrates a
+            <strong>simple, reliable approach</strong>
+            to verify mockserver integration:
+          </p>
+
+          <h3>Core Test Implementation</h3>
+          <div class="code-header">
+            <span>ex8/webapp/test/e2e/sample.test.js</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex8/webapp/test/e2e/sample.test.js"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-javascript"><code>const { wdi5 } = require('wdio-ui5-service');
+
+describe('Ex8: Offline E2E Testing with Mockserver & wdi5', () => {
+  const logger = wdi5.getLogger('📚 BookshopTest');
+
+  it('should load the app and display mockserver data', async () => {
+    logger.info('🚀 Starting simple mockserver data test...');
+
+    // Wait a moment for data to load
+    await browser.pause(3000);
+
+    // Find table with id com.devtoberfest.mockserver.ex8::BooksList--fe::table::Books::LineItem-innerTable
+    const table = await browser.asControl({
+      selector: {
+        interaction: 'root',
+        controlType: 'sap.m.Table',
+      },
+      timeout: 10000,
+    });
+    logger.info('✅ Found table control');
+
+    logger.info(`📊 Found metadata for ${name}`);
+    // Get data from table
+    const items = await table.getItems();
+    logger.info(`📊 Found ${items.length} items in table`);
+
+    // table should be 2 rows with books titles "The Great Gatsby" and "To Kill a Mockingbird"
+    expect(items.length).toBe(2);
+
+    // Get the book titles from the items
+    const bookTitles = [];
+    for (const item of items) {
+      const cells = await item.getCells();
+      if (cells && cells.length > 0) {
+        // Assuming the title is in the first cell
+        const titleText = (await cells[0].getText) ? await cells[0].getText() : await cells[0].getProperty('text');
+        bookTitles.push(titleText);
+      }
+    }
+
+    logger.info(`📚 Book titles found: ${bookTitles.join(', ')}`);
+
+    // Assert the expected books are present
+    expect(bookTitles).toContain('The Great Gatsby');
+    expect(bookTitles).toContain('To Kill a Mockingbird');
+
+    logger.info('🎉 SUCCESS: Mockserver provided expected book data offline!');
+  });
+});</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="test-validation">8.3 What the Test Validates</h2>
+
+          <ol>
+            <li>
+              <strong>App Loading:</strong>
+              Mockserver app loads successfully at
+              <code>localhost:8088</code>
+            </li>
+            <li>
+              <strong>UI5 Initialization:</strong>
+              Framework loads and initializes properly
+            </li>
+            <li>
+              <strong>Control Detection:</strong>
+              UI5 table/list controls are rendered
+            </li>
+            <li>
+              <strong>Offline Operation:</strong>
+              Everything works without backend dependencies
+            </li>
+          </ol>
+
+          <div class="alert alert-info">
+            <strong>Reliable Testing Approach:</strong>
+            The test uses a simple validation strategy that focuses on fundamental mockserver capabilities rather than
+            complex UI interactions, ensuring consistent results across different environments.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="configuration-details">8.4 Configuration Details</h2>
+
+          <p>
+            The wdi5 configuration (
+            <code>webapp/test/e2e/wdio.conf.js</code>
+            ) should be working out of the box. Only if you run on a different port, you need to change the baseUrl in
+            the configuration.
+          </p>
+
+          <pre class="language-javascript"><code>baseUrl: "http://localhost:8088/index.html",</code></pre>
+
+          <div class="alert alert-success">
+            <strong>Result:</strong>
+            The simple test validates that mockserver provides data to UI5 controls for offline operation.
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h2 id="key-benefits-e2e">8.5 Key Benefits of Offline E2E Testing</h2>
+
+          <ul>
+            <li>
+              <strong>CI/CD Ready:</strong>
+              Tests run in 3.7 seconds without backend dependencies
+            </li>
+            <li>
+              <strong>Reliable Foundation:</strong>
+              Simple validation approach that consistently works across environments
+            </li>
+            <li>
+              <strong>UI5-Aware Testing:</strong>
+              Uses wdi5 (WebDriverIO UI5 Service) for proper UI5 control detection
+            </li>
+            <li>
+              <strong>Offline Validation:</strong>
+              Proves complete functionality without network dependencies
+            </li>
+            <li>
+              <strong>Extension Ready:</strong>
+              Simple base test ready for enhancement with complex scenarios
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="running-tests">8.6 Running the Tests</h2>
+
+          <div class="alert alert-warning">
+            <strong>Prerequisites:</strong>
+            Make sure you have Chrome or Chromium installed for the WebDriver tests.
+          </div>
+
+          <h3>Test Execution Steps:</h3>
+          <ol>
+            <li>
+              <strong>Start the mockserver:</strong>
+              <pre class="language-bash"><code>npm run start:ex8</code></pre>
+            </li>
+            <li>
+              <strong>Run the E2E tests:</strong>
+              <pre class="language-bash"><code>npm run test:ex8-e2e</code></pre>
+            </li>
+            <li>
+              <strong>Expected output:</strong>
+              Test should complete in ~3.7 seconds with successful validation of book data
+            </li>
+          </ol>
+
+          <h3>Test Results:</h3>
+          <p>A successful test run will show:</p>
+          <ul>
+            <li>✅ App loads successfully at localhost:8088</li>
+            <li>✅ UI5 table control detected and accessible</li>
+            <li>✅ Expected book titles found: "The Great Gatsby", "To Kill a Mockingbird"</li>
+            <li>✅ Complete offline operation without backend</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="next-steps">Next Steps</h2>
+          <p>
+            <strong>Exercise 9</strong>
+            will show how to use ui5-middleware-odata-recorder to capture live OData traffic from your backend and
+            automatically generate mockserver-compatible datasets for hybrid development workflows.
+          </p>
+        </div>
+        <div class="exercise-nav">
+          <div><a href="error-handling.html" class="exercise-nav-prev">← Exercise 7: Error Handling</a></div>
+          <div><a href="odata-recorder.html" class="exercise-nav-next">Exercise 9: OData Recorder →</a></div>
+        </div>
+      </main>
+    </div>
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

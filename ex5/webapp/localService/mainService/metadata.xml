@@ -1,0 +1,860 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
+        <edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="BookshopService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotation Term="Core.Links">
+                <Collection>
+                    <Record>
+                        <PropertyValue Property="rel" String="author"/>
+                        <PropertyValue Property="href" String="https://cap.cloud.sap"/>
+                    </Record>
+                </Collection>
+            </Annotation>
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Books" EntityType="BookshopService.Books">
+                    <NavigationPropertyBinding Path="currency" Target="Currencies"/>
+                    <NavigationPropertyBinding Path="chapters" Target="Chapters"/>
+                    <NavigationPropertyBinding Path="reviews" Target="Reviews"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="Books"/>
+                </EntitySet>
+                <EntitySet Name="Chapters" EntityType="BookshopService.Chapters">
+                    <NavigationPropertyBinding Path="book" Target="Books"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="Chapters"/>
+                </EntitySet>
+                <EntitySet Name="Reviews" EntityType="BookshopService.Reviews">
+                    <NavigationPropertyBinding Path="book" Target="Books"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="Reviews"/>
+                </EntitySet>
+                <EntitySet Name="Currencies" EntityType="BookshopService.Currencies">
+                    <NavigationPropertyBinding Path="texts" Target="Currencies_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="Currencies_texts"/>
+                </EntitySet>
+                <EntitySet Name="Currencies_texts" EntityType="BookshopService.Currencies_texts"/>
+                <ActionImport Name="massHalfPrice" Action="BookshopService.massHalfPrice" EntitySet="Books"/>
+                <ActionImport Name="refreshCatalog" Action="BookshopService.refreshCatalog"/>
+                <ActionImport Name="generateReport" Action="BookshopService.generateReport"/>
+                <ActionImport Name="createBooksAndChapters" Action="BookshopService.createBooksAndChapters"/>
+                <FunctionImport Name="getSumBookPrices" Function="BookshopService.getSumBookPrices"/>
+            </EntityContainer>
+            <EntityType Name="Books">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="title" Type="Edm.String" MaxLength="100"/>
+                <Property Name="author" Type="Edm.String" MaxLength="100"/>
+                <Property Name="price" Type="Edm.Decimal" Precision="9" Scale="2"/>
+                <NavigationProperty Name="currency" Type="BookshopService.Currencies">
+                    <ReferentialConstraint Property="currency_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="stock" Type="Edm.Int32"/>
+                <Property Name="description" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="coverUrl" Type="Edm.String" MaxLength="500"/>
+                <NavigationProperty Name="chapters" Type="Collection(BookshopService.Chapters)" Partner="book">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="reviews" Type="Collection(BookshopService.Reviews)" Partner="book"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="BookshopService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="BookshopService.Books"/>
+            </EntityType>
+            <EntityType Name="Chapters">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="title" Type="Edm.String" MaxLength="100"/>
+                <Property Name="content" Type="Edm.String" MaxLength="5000"/>
+                <Property Name="pageNumber" Type="Edm.Int32"/>
+                <NavigationProperty Name="book" Type="BookshopService.Books" Partner="chapters">
+                    <ReferentialConstraint Property="book_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="book_ID" Type="Edm.Guid"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="BookshopService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="BookshopService.Chapters"/>
+            </EntityType>
+            <EntityType Name="Reviews">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="reviewer" Type="Edm.String" MaxLength="100"/>
+                <Property Name="rating" Type="Edm.Int32"/>
+                <Property Name="comment" Type="Edm.String" MaxLength="1000"/>
+                <NavigationProperty Name="book" Type="BookshopService.Books" Partner="reviews">
+                    <ReferentialConstraint Property="book_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="book_ID" Type="Edm.Guid"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="BookshopService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="BookshopService.Reviews"/>
+            </EntityType>
+            <EntityType Name="Currencies">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="symbol" Type="Edm.String" MaxLength="5"/>
+                <Property Name="minorUnit" Type="Edm.Int16"/>
+                <NavigationProperty Name="texts" Type="Collection(BookshopService.Currencies_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="BookshopService.Currencies_texts">
+                    <ReferentialConstraint Property="code" ReferencedProperty="code"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="DraftAdministrativeData">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="CreatedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="InProcessByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean"/>
+            </EntityType>
+            <EntityType Name="Currencies_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+            </EntityType>
+            <ComplexType Name="return_BookshopService_Books_promoteBook">
+                <Property Name="message" Type="Edm.String"/>
+                <Property Name="promoted" Type="Edm.Boolean"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_Books_setDiscount">
+                <Property Name="message" Type="Edm.String"/>
+                <Property Name="newPrice" Type="Edm.Decimal" Scale="variable"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_Books_addChapter">
+                <Property Name="ID" Type="Edm.Guid"/>
+                <Property Name="title" Type="Edm.String"/>
+                <Property Name="pageNumber" Type="Edm.Int32"/>
+                <Property Name="content" Type="Edm.String"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_Books_halfPrice">
+                <Property Name="ID" Type="Edm.Guid"/>
+                <Property Name="title" Type="Edm.String"/>
+                <Property Name="price" Type="Edm.Decimal" Scale="variable"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_Books_showCoverPicture">
+                <Property Name="value" Type="Edm.String"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_Books_getCurrentPrice">
+                <Property Name="price" Type="Edm.Decimal" Scale="variable"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_refreshCatalog">
+                <Property Name="message" Type="Edm.String"/>
+                <Property Name="refreshedAt" Type="Edm.DateTimeOffset"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_generateReport">
+                <Property Name="message" Type="Edm.String"/>
+                <Property Name="reportUrl" Type="Edm.String"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_createBooksAndChapters">
+                <Property Name="message" Type="Edm.String"/>
+                <Property Name="createdBooks" Type="Collection(BookshopService.return_BookshopService_createBooksAndChapters_createdBooks)" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_createBooksAndChapters_createdBooks">
+                <Property Name="ID" Type="Edm.Guid"/>
+                <Property Name="title" Type="Edm.String"/>
+                <Property Name="author" Type="Edm.String"/>
+                <Property Name="price" Type="Edm.Decimal" Scale="variable"/>
+                <Property Name="currency" Type="Edm.String"/>
+                <Property Name="stock" Type="Edm.Int32"/>
+                <Property Name="description" Type="Edm.String"/>
+                <Property Name="coverUrl" Type="Edm.String"/>
+                <Property Name="chapters" Type="Collection(BookshopService.return_BookshopService_createBooksAndChapters_createdBooks_chapters)" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_createBooksAndChapters_createdBooks_chapters">
+                <Property Name="ID" Type="Edm.Guid"/>
+                <Property Name="title" Type="Edm.String"/>
+                <Property Name="content" Type="Edm.String"/>
+                <Property Name="pageNumber" Type="Edm.Int32"/>
+            </ComplexType>
+            <ComplexType Name="ap_BookshopService_createBooksAndChapters_booksData">
+                <Property Name="title" Type="Edm.String"/>
+                <Property Name="author" Type="Edm.String"/>
+                <Property Name="price" Type="Edm.Decimal" Scale="variable"/>
+                <Property Name="currency" Type="Edm.String"/>
+                <Property Name="stock" Type="Edm.Int32"/>
+                <Property Name="description" Type="Edm.String"/>
+                <Property Name="coverUrl" Type="Edm.String"/>
+                <Property Name="chapters" Type="Collection(BookshopService.ap_BookshopService_createBooksAndChapters_booksData_chapters)" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="ap_BookshopService_createBooksAndChapters_booksData_chapters">
+                <Property Name="title" Type="Edm.String"/>
+                <Property Name="content" Type="Edm.String"/>
+                <Property Name="pageNumber" Type="Edm.Int32"/>
+            </ComplexType>
+            <ComplexType Name="return_BookshopService_getSumBookPrices">
+                <Property Name="totalPrice" Type="Edm.Decimal" Scale="variable"/>
+            </ComplexType>
+            <Action Name="promoteBook" IsBound="true">
+                <Parameter Name="in" Type="BookshopService.Books"/>
+                <ReturnType Type="BookshopService.return_BookshopService_Books_promoteBook"/>
+            </Action>
+            <Action Name="setDiscount" IsBound="true">
+                <Parameter Name="in" Type="BookshopService.Books"/>
+                <Parameter Name="percentage" Type="Edm.Int32"/>
+                <Parameter Name="reason" Type="Edm.String"/>
+                <ReturnType Type="BookshopService.return_BookshopService_Books_setDiscount"/>
+            </Action>
+            <Action Name="addChapter" IsBound="true">
+                <Parameter Name="in" Type="BookshopService.Books"/>
+                <Parameter Name="title" Type="Edm.String"/>
+                <Parameter Name="pageNumber" Type="Edm.Int32"/>
+                <Parameter Name="content" Type="Edm.String"/>
+                <ReturnType Type="BookshopService.return_BookshopService_Books_addChapter"/>
+            </Action>
+            <Action Name="halfPrice" IsBound="true">
+                <Parameter Name="in" Type="BookshopService.Books"/>
+                <ReturnType Type="BookshopService.return_BookshopService_Books_halfPrice"/>
+            </Action>
+            <Action Name="showCoverPicture" IsBound="true">
+                <Parameter Name="in" Type="BookshopService.Books"/>
+                <ReturnType Type="BookshopService.return_BookshopService_Books_showCoverPicture"/>
+            </Action>
+            <Function Name="getCurrentPrice" IsBound="true" IsComposable="false">
+                <Parameter Name="in" Type="BookshopService.Books"/>
+                <ReturnType Type="BookshopService.return_BookshopService_Books_getCurrentPrice"/>
+            </Function>
+            <Action Name="massHalfPrice" IsBound="true" EntitySetPath="books">
+                <Parameter Name="books" Type="Collection(BookshopService.Books)" Nullable="true"/>
+                <ReturnType Type="Collection(BookshopService.Books)"/>
+            </Action>
+            <Action Name="massHalfPrice" IsBound="false">
+                <Parameter Name="books" Type="Collection(BookshopService.Books)" Nullable="true"/>
+                <ReturnType Type="Collection(BookshopService.Books)"/>
+            </Action>
+            <Action Name="similarBooks" IsBound="true" EntitySetPath="book">
+                <Parameter Name="book" Type="BookshopService.Books"/>
+                <ReturnType Type="Collection(BookshopService.Books)"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="BookshopService.Books"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="BookshopService.Books"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="BookshopService.Chapters"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="BookshopService.Chapters"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="BookshopService.Reviews"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="BookshopService.Reviews"/>
+            </Action>
+            <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="BookshopService.Books"/>
+                <ReturnType Type="BookshopService.Books"/>
+            </Action>
+            <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="BookshopService.Reviews"/>
+                <ReturnType Type="BookshopService.Reviews"/>
+            </Action>
+            <Action Name="draftEdit" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="BookshopService.Books"/>
+                <Parameter Name="PreserveChanges" Type="Edm.Boolean"/>
+                <ReturnType Type="BookshopService.Books"/>
+            </Action>
+            <Action Name="draftEdit" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="BookshopService.Reviews"/>
+                <Parameter Name="PreserveChanges" Type="Edm.Boolean"/>
+                <ReturnType Type="BookshopService.Reviews"/>
+            </Action>
+            <Action Name="refreshCatalog" IsBound="false">
+                <ReturnType Type="BookshopService.return_BookshopService_refreshCatalog"/>
+            </Action>
+            <Action Name="generateReport" IsBound="false">
+                <Parameter Name="reportType" Type="Edm.String"/>
+                <Parameter Name="dateFrom" Type="Edm.Date"/>
+                <Parameter Name="dateTo" Type="Edm.Date"/>
+                <ReturnType Type="BookshopService.return_BookshopService_generateReport"/>
+            </Action>
+            <Action Name="createBooksAndChapters" IsBound="false">
+                <Parameter Name="booksData" Type="Collection(BookshopService.ap_BookshopService_createBooksAndChapters_booksData)" Nullable="true"/>
+                <ReturnType Type="BookshopService.return_BookshopService_createBooksAndChapters"/>
+            </Action>
+            <Function Name="getSumBookPrices" IsBound="false" IsComposable="false">
+                <ReturnType Type="BookshopService.return_BookshopService_getSumBookPrices"/>
+            </Function>
+            <Annotations Target="BookshopService.Books">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Book"/>
+                        <PropertyValue Property="TypeNamePlural" String="Books"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="title"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="author"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>title</PropertyPath>
+                        <PropertyPath>author</PropertyPath>
+                        <PropertyPath>price</PropertyPath>
+                        <PropertyPath>stock</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="title"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="author"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="price"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="currency_code"/>
+                            <PropertyValue Property="Label" String="Currency"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="stock"/>
+                        </Record>
+                        <Record Type="UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="CAP Promote Book"/>
+                            <PropertyValue Property="Action" String="BookshopService.promoteBook"/>
+                        </Record>
+                        <Record Type="UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="CAP Set Discount"/>
+                            <PropertyValue Property="Action" String="BookshopService.setDiscount"/>
+                        </Record>
+                        <Record Type="UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="CAP Generate Report"/>
+                            <PropertyValue Property="Action" String="BookshopService.EntityContainer/generateReport"/>
+                        </Record>
+                        <Record Type="UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="CAP Refresh Catalog"/>
+                            <PropertyValue Property="Action" String="BookshopService.EntityContainer/refreshCatalog"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="CAP Half Price"/>
+                            <PropertyValue Property="Action" String="BookshopService.halfPrice"/>
+                        </Record>
+                        <Record Type="UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="CAP Show Cover Picture"/>
+                            <PropertyValue Property="Action" String="BookshopService.showCoverPicture"/>
+                        </Record>
+                        <Record Type="UI.DataFieldForAction">
+                            <PropertyValue Property="Label" String="CAP Add Chapter"/>
+                            <PropertyValue Property="Action" String="BookshopService.addChapter"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Book Details"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#BookDetails"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Chapters"/>
+                            <PropertyValue Property="Target" AnnotationPath="chapters/@UI.LineItem"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Reviews"/>
+                            <PropertyValue Property="Target" AnnotationPath="reviews/@UI.LineItem"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="BookDetails">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="title"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="author"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="price"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="currency_code"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="stock"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="description"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="coverUrl"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="BookshopService.EntityContainer/Books">
+                <Annotation Term="Common.DraftRoot">
+                    <Record Type="Common.DraftRootType">
+                        <PropertyValue Property="ActivationAction" String="BookshopService.draftActivate"/>
+                        <PropertyValue Property="EditAction" String="BookshopService.draftEdit"/>
+                        <PropertyValue Property="PreparationAction" String="BookshopService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/createdAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Created On"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/createdBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Created By"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/modifiedAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Changed On"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/modifiedBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Changed By"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/title">
+                <Annotation Term="Common.Label" String="Title"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/author">
+                <Annotation Term="Common.Label" String="Author"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/price">
+                <Annotation Term="Common.Label" String="Price"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/currency">
+                <Annotation Term="Common.Label" String="Currency"/>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/currency_code">
+                <Annotation Term="Common.Label" String="Currency"/>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Currency"/>
+                        <PropertyValue Property="CollectionPath" String="Currencies"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="currency_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Core.Description" String="Currency code as specified by ISO 4217"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/stock">
+                <Annotation Term="Common.Label" String="Stock"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/description">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/coverUrl">
+                <Annotation Term="Common.Label" String="Cover Image URL"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Books/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.setDiscount(BookshopService.Books)">
+                <Annotation Term="Common.SideEffects">
+                    <Record Type="Common.SideEffectsType">
+                        <PropertyValue Property="TargetEntities">
+                            <Collection>
+                                <NavigationPropertyPath>
+                                </NavigationPropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Chapter"/>
+                        <PropertyValue Property="TypeNamePlural" String="Chapters"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="title"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="pageNumber"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="title"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="pageNumber"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Chapter Details"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#ChapterDetails"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="ChapterDetails">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="title"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="pageNumber"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="content"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="BookshopService.EntityContainer/Chapters">
+                <Annotation Term="Common.DraftNode">
+                    <Record Type="Common.DraftNodeType">
+                        <PropertyValue Property="PreparationAction" String="BookshopService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/createdAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Created On"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/createdBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Created By"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/modifiedAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Changed On"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/modifiedBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Changed By"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/title">
+                <Annotation Term="Common.Label" String="Chapter Title"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/content">
+                <Annotation Term="Common.Label" String="Content"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/pageNumber">
+                <Annotation Term="Common.Label" String="Page Number"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Chapters/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Review"/>
+                        <PropertyValue Property="TypeNamePlural" String="Reviews"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="reviewer"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="rating"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="reviewer"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="rating"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="comment"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Review Details"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#ReviewDetails"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="ReviewDetails">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="reviewer"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="rating"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="comment"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="BookshopService.EntityContainer/Reviews">
+                <Annotation Term="Common.DraftRoot">
+                    <Record Type="Common.DraftRootType">
+                        <PropertyValue Property="ActivationAction" String="BookshopService.draftActivate"/>
+                        <PropertyValue Property="EditAction" String="BookshopService.draftEdit"/>
+                        <PropertyValue Property="PreparationAction" String="BookshopService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/createdAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Created On"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/createdBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Created By"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/modifiedAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Changed On"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/modifiedBy">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Changed By"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/reviewer">
+                <Annotation Term="Common.Label" String="Reviewer"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/rating">
+                <Annotation Term="Common.Label" String="Rating"/>
+                <Annotation Term="Validation.Minimum" Int="1"/>
+                <Annotation Term="Validation.Maximum" Int="5"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/comment">
+                <Annotation Term="Common.Label" String="Comment"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Reviews/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies">
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies/name">
+                <Annotation Term="Common.Label" String="Name"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies/descr">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies/code">
+                <Annotation Term="Common.Text" Path="name"/>
+                <Annotation Term="Common.Label" String="Currency Code"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies/symbol">
+                <Annotation Term="Common.Label" String="Currency Symbol"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies/minorUnit">
+                <Annotation Term="Common.Label" String="Currency Minor Unit Fractions"/>
+            </Annotations>
+            <Annotations Target="BookshopService.DraftAdministrativeData">
+                <Annotation Term="Common.Label" String="Draft Administrative Data"/>
+            </Annotations>
+            <Annotations Target="BookshopService.DraftAdministrativeData/DraftUUID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Common.Label" String="Draft (Technical ID)"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="BookshopService.DraftAdministrativeData/CreationDateTime">
+                <Annotation Term="Common.Label" String="Draft Created On"/>
+            </Annotations>
+            <Annotations Target="BookshopService.DraftAdministrativeData/CreatedByUser">
+                <Annotation Term="Common.Label" String="Draft Created By"/>
+            </Annotations>
+            <Annotations Target="BookshopService.DraftAdministrativeData/DraftIsCreatedByMe">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Common.Label" String="Draft Created By Me"/>
+            </Annotations>
+            <Annotations Target="BookshopService.DraftAdministrativeData/LastChangeDateTime">
+                <Annotation Term="Common.Label" String="Draft Last Changed On"/>
+            </Annotations>
+            <Annotations Target="BookshopService.DraftAdministrativeData/LastChangedByUser">
+                <Annotation Term="Common.Label" String="Draft Last Changed By"/>
+            </Annotations>
+            <Annotations Target="BookshopService.DraftAdministrativeData/InProcessByUser">
+                <Annotation Term="Common.Label" String="Draft In Process By"/>
+            </Annotations>
+            <Annotations Target="BookshopService.DraftAdministrativeData/DraftIsProcessedByMe">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Common.Label" String="Draft In Process By Me"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies_texts/locale">
+                <Annotation Term="Common.Label" String="Language Code"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies_texts/name">
+                <Annotation Term="Common.Label" String="Name"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies_texts/descr">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="BookshopService.Currencies_texts/code">
+                <Annotation Term="Common.Text" Path="name"/>
+                <Annotation Term="Common.Label" String="Currency Code"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
