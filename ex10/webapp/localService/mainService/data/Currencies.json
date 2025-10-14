@@ -1,0 +1,23 @@
+[
+  {
+    "code": "EUR",
+    "symbol": "€",
+    "name": "Euro",
+    "descr": "European Union Euro",
+    "minorUnit": 2
+  },
+  {
+    "code": "USD",
+    "symbol": "$",
+    "name": "US Dollar",
+    "descr": "United States Dollar",
+    "minorUnit": 2
+  },
+  {
+    "code": "GBP",
+    "symbol": "£",
+    "name": "British Pound",
+    "descr": "British Pound Sterling",
+    "minorUnit": 2
+  }
+]
