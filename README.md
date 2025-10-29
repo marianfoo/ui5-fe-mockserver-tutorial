@@ -46,6 +46,7 @@ If you want to create your own Fiori app and follow the tutorial concepts:
 - [7. Error Handling and Actions](#7-error-handling-and-actions)
 - [8. Offline E2E Testing with wdi5 and Mockserver](#8-offline-e2e-testing-with-wdi5-and-mockserver)
 - [9. Recording Live OData Traffic with ui5-middleware-odata-recorder](#9-recording-live-odata-traffic-with-ui5-middleware-odata-recorder)
+- [10. TypeScript Type Generation with Mockserver Admin](#10-typescript-type-generation-with-mockserver-admin)
 - [Summary](#summary)
 
 ---
@@ -128,17 +129,18 @@ Learn to use **`@sap-ux/ui5-middleware-fe-mockserver`** for offline Fiori develo
 
 Each `ex{n}/` folder contains a Fiori application demonstrating different mockserver capabilities:
 
-| Exercise | Port | Focus              | Key Files               | Test Command               |
-| -------- | ---- | ------------------ | ----------------------- | -------------------------- |
-| **ex1/** | 8081 | Generated Data     | `ui5-mock.yaml`         | `npm run start:ex1`        |
-| **ex2/** | 8082 | Custom JSON Data   | `data/*.json`           | `npm run start:ex2`        |
-| **ex3/** | 8083 | JavaScript Logic   | `data/Books.js`         | `npm run start:ex3`        |
-| **ex4/** | 8084 | Multiple Services  | `reviewService/`        | `npm run start:ex4`        |
-| **ex5/** | 8085 | Cross-Service Comm | `Books.js + Reviews.js` | `npm run start:ex5`        |
-| **ex6/** | 8086 | Tenant Isolation   | `Books-tenant*.json`    | `npm run start:ex6`        |
-| **ex7/** | 8087 | Error Handling     | `EntityContainer.js`    | `npm run start:ex7`        |
-| **ex8/** | 8088 | wdi5 E2E Testing   | `sample.test.js`        | `npm run test:ex8-e2e`     |
-| **ex9/** | 8089 | OData Recorder     | `ui5-record.yaml`       | `npm run start:ex9-record` |
+| Exercise  | Port  | Focus              | Key Files               | Test Command               |
+|-----------|-------|--------------------|-------------------------|----------------------------|
+| **ex1/**  | 8081  | Generated Data     | `ui5-mock.yaml`         | `npm run start:ex1`        |
+| **ex2/**  | 8082  | Custom JSON Data   | `data/*.json`           | `npm run start:ex2`        |
+| **ex3/**  | 8083  | JavaScript Logic   | `data/Books.js`         | `npm run start:ex3`        |
+| **ex4/**  | 8084  | Multiple Services  | `reviewService/`        | `npm run start:ex4`        |
+| **ex5/**  | 8085  | Cross-Service Comm | `Books.js + Reviews.js` | `npm run start:ex5`        |
+| **ex6/**  | 8086  | Tenant Isolation   | `Books-tenant*.json`    | `npm run start:ex6`        |
+| **ex7/**  | 8087  | Error Handling     | `EntityContainer.js`    | `npm run start:ex7`        |
+| **ex8/**  | 8088  | wdi5 E2E Testing   | `sample.test.js`        | `npm run test:ex8-e2e`     |
+| **ex9/**  | 8089  | OData Recorder     | `ui5-record.yaml`       | `npm run start:ex9-record` |
+| **ex10/** | 8090 | Typescript         | `package.json`     | `npm run start:ex10`      |
 
 Each exercise runs on its own port.
 
@@ -1223,85 +1225,225 @@ http://localhost:8089/index.html?__record=1&sap-client=200
 # Creates: Books-200.json, Chapters-200.json
 ```
 
-## Summary
+## 10. TypeScript Type Generation with Mockserver Admin
 
-This tutorial covers the main features of `@sap-ux/ui5-middleware-fe-mockserver` using CAP service integration:
+### 10.1 Overview: Type-Safe Mock Data Development
 
-### 🎯 **Exercise Progression Overview**
+Exercise 10 demonstrates how to leverage **`@sap-ux/fe-mockserver-admin`** to automatically generate TypeScript type definitions from your OData metadata. This provides:
 
-1. **Basic Setup & Generated Data**
+- **Type safety** for mock data development
+- **IntelliSense support** in your IDE
+- **Compile-time validation** of mock data structures
+- **Automated type generation** from OData metadata
 
-   - **Fiori Elements app** created with SAP Fiori Application Generator
-   - **Automatic mock data generation** based on OData metadata
-   - **Critical configuration step**: Removing backend proxy for true offline development
-   - Understanding the mockserver's automatic data generation capabilities
-   - Quick prototyping without backend dependencies
+The `fe-mockserver-admin` package analyzes your service metadata and generates corresponding TypeScript interfaces, eliminating manual type definitions and ensuring consistency with your actual OData service.
 
-2. **Custom JSON Mock Data**
+### 10.2 Package Installation and Setup
 
-   - Realistic, controlled test data with proper UUID structures
-   - Static data scenarios for consistent testing
-   - Integration with real CAP service metadata structure
+Exercise 10 includes the required dependencies and scripts for type generation:
 
-3. **JavaScript-Based Dynamic Logic**
+**Key Dependencies in `package.json`:**
+```json
+{
+  "devDependencies": {
+    "@sap-ux/fe-mockserver-admin": "0.0.14",
+    "typescript": "^5.9.3",
+    "ts-node": "^10.9.2"
+  },
+  "scripts": {
+    "generate-types": "fe-mockserver-admin generate-types -m ./webapp/localService/mainService/metadata.xml --output ./webapp/localService/mainService/data",
+    "generate-entity-files": "fe-mockserver-admin generate-entity-files -m ./webapp/localService/mainService/metadata.xml --output ./webapp/localService/mainService/data"
+  }
+}
+```
 
-   - Dynamic data generation with business rules
-   - Custom action implementations mirroring real CAP service behavior
-   - Data manipulation and validation
+### 10.3 TypeScript Configuration
 
-4. **Multiple Services Architecture**
+The `tsconfig.json` is configured for optimal mock data development:
 
-   - **Real CAP Integration**: Using actual `BookshopService` (`/bookshop`) and `ReviewsService` (`/reviews`)
-   - **Microservices Simulation**: Different domains handled by separate services
-   - **Service Actions**: Both services include bound/unbound actions for testing
+```json
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "esnext",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "strict": false,
+    "isolatedModules": true,
+    "skipLibCheck": true
+  }
+}
+```
 
-5. **Cross-Service Communication**
+### 10.4 Automatic Type Generation from Metadata
 
-   - **Realistic Integration Patterns**: Book promotions triggering review creation
-   - **Audit Trails**: System activities logged across service boundaries
-   - **Service Validation**: Cross-service data integrity checks
-   - **Error Resilience**: Graceful handling of cross-service failures
+**Generate TypeScript types from your OData metadata:**
 
-6. **Context-Based Isolation (Multi-Tenancy)**
+```bash
+npm run generate-types
+```
 
-   - **Tenant-Specific Data**: Different datasets per customer/context
-   - **Business Logic Variations**: Tenant-specific processing rules
-   - **URL-Based Routing**: Multiple access patterns for tenant isolation
+This command analyzes `metadata.xml` and creates comprehensive type definitions:
 
-7. **Basic Error Handling**
+**Generated Files Structure:**
+```
+webapp/localService/mainService/data/
+├── ODataTypes.d.ts          # Main type definitions
+├── Books.ts                 # Books entity mock data
+├── Chapters.ts              # Chapters entity mock data
+├── Reviews.ts               # Reviews entity mock data
+├── Currencies.ts            # Currencies entity mock data
+├── EntityContainer.ts       # Service container types
+└── ...
+```
 
-   - **Simple Validation Examples**: Input validation with 400 Bad Request responses
-   - **Error Code Patterns**: Common HTTP status codes (400, 404, 422, 500, 501)
-   - **Testing Scenarios**: Easy-to-understand error simulation examples
+**Example Generated Types (`ODataTypes.d.ts`):**
+```typescript
+// Type definitions for Books entity
+export type Books = {
+  createdAt?: string;
+  createdBy?: string;
+  modifiedAt?: string;
+  modifiedBy?: string;
+  ID: string;
+  title?: string;
+  author?: string;
+  price?: number;
+  currency_code?: string;
+  stock?: number;
+  description?: string;
+  coverUrl?: string;
+  IsActiveEntity: boolean;
+  HasActiveEntity: boolean;
+  HasDraftEntity: boolean;
+  currency?: NavPropTo<Currencies>;
+  chapters?: NavPropTo<Chapters[]>;
+  reviews?: NavPropTo<Reviews[]>;
+}
 
-8. **Offline E2E Testing with wdi5** ✅
+export type BooksKeys = {
+  ID: string;
+  IsActiveEntity: boolean;
+}
+```
 
-   - **Simple Test Implementation**: Basic validation that mockserver provides data to UI5 controls
-   - **Reliable CI/CD Integration**: 3.7-second test execution without backend dependencies
-   - **UI5-Aware Testing**: Uses wdi5 (WebDriverIO UI5 Service) for UI5 control detection
-   - **Offline Validation**: Proves complete functionality without network dependencies
-   - **Foundation for Extension**: Simple base test ready for enhancement with complex scenarios
+### 10.5 Type-Safe Mock Data Development
 
-9. **Recording Live OData Traffic** ✅
-   - **Live Data Capture**: Record real OData responses from backend systems by clicking through apps
-   - **Automatic Dataset Generation**: Convert live traffic into mockserver-compatible JSON files
-   - **Complete Entity Capture**: Capture full entity data, not just UI-selected fields
-   - **Multi-Tenant Recording**: Record different datasets per SAP client for isolated testing
-   - **Recording Workflow**: Record from backend → Replay offline for development/testing
+With generated types, you can create type-safe mock data files:
 
-### 🔧 **Key Technical Achievements**
+**Example: Type-safe `Books.ts` mock data:**
+```typescript
+import { Books } from './ODataTypes';
 
-- **Real CAP Service Integration**: Working with actual `http://localhost:4004/reviews/$metadata`
-- **Action Patterns**: Bound, unbound, collection-bound, and nested actions
-- **Basic Error Patterns**: 400, 404, 422, 500, 501 status codes with simple examples
-- **Cross-Service Workflows**: Book operations triggering review management actions
-- **Simple Validation**: Basic input validation patterns developers can extend
-- **Error Simulation**: Simple patterns for testing different error scenarios
-- **Simple E2E Testing**: Basic wdi5 integration proving mockserver + UI5 compatibility
-- **CI/CD Ready Tests**: 3.7-second test execution without backend dependencies
-- **Reliable Test Foundation**: Simple validation approach that always works
-- **Live Data Recording**: UI5 middleware that captures real OData traffic and generates mock datasets
-- **Complete Entity Capture**: Automatic removal of $select parameters to record full entity data
-- **Multi-Tenant Data Isolation**: SAP client-based recording with tenant-specific JSON files
+const booksData: Books[] = [
+  {
+    ID: "3afb35fa-e2c9-40d0-8e22-90e96ead9944",
+    title: "The Great Gatsby",
+    author: "F. Scott Fitzgerald", 
+    price: 12.99,
+    currency_code: "USD",
+    stock: 50,
+    description: "A classic novel about the American Dream",
+    IsActiveEntity: true,
+    HasActiveEntity: false,
+    HasDraftEntity: false,
+    createdAt: "2025-01-01T00:00:00.000Z",
+    createdBy: "admin",
+    modifiedAt: "2025-01-01T00:00:00.000Z",
+    modifiedBy: "admin"
+  }
+  // TypeScript ensures all required fields are present
+  // and validates data types at compile time
+];
 
-Each exercise builds upon the previous one, creating a mockserver setup for Fiori development and offline testing.
+module.exports = booksData;
+```
+
+### 10.6 Benefits of Type-Safe Mock Development
+
+#### **1. Compile-Time Validation**
+```typescript
+// ❌ TypeScript catches errors at compile time
+const invalidBook: Books = {
+  ID: "123",
+  price: "invalid", // Error: Type 'string' is not assignable to type 'number'
+  IsActiveEntity: true,
+  HasActiveEntity: false,
+  HasDraftEntity: false
+  // Error: Missing required fields
+};
+```
+
+#### **2. IDE IntelliSense Support**
+- Auto-completion for entity properties
+- Type hints for complex navigation properties
+- Immediate feedback on property types
+
+#### **3. Refactoring Safety**
+- When metadata changes, types update automatically
+- Breaking changes in mock data are caught immediately
+- Consistent data structures across all mock files
+
+### 10.7 Integration with Existing Mockserver Workflows
+
+The generated TypeScript files work seamlessly with the existing mockserver:
+
+**Standard `ui5-mock.yaml` Configuration:**
+```yaml
+- name: sap-fe-mockserver
+  beforeMiddleware: csp
+  configuration:
+    services:
+      - urlPath: /bookshop
+        metadataPath: ./webapp/localService/mainService/metadata.xml
+        mockdataPath: ./webapp/localService/mainService/data
+        generateMockData: false  # Use custom TypeScript files
+```
+
+### 10.8 Running Exercise 10
+
+**Start the application with TypeScript-generated mock data:**
+
+```bash
+npm run start:ex10
+```
+
+**What you'll experience:**
+- Type-safe mock data loaded from `.ts` files
+- Consistent data structure matching your OData service
+- Full IntelliSense support during development
+- Compile-time validation of all mock data
+
+### 10.10 Best Practices
+
+#### **1. Regenerate Types After Metadata Changes**
+```bash
+# After updating metadata.xml
+npm run generate-types
+```
+
+#### **2. Version Control Strategy**
+- **Include**: `ODataTypes.d.ts` and other generated type files
+- **Exclude**: Generated `.js` files (if using ts-node)
+- **Include**: Custom `.ts` mock data files
+
+#### **3. Development Workflow**
+1. Update service metadata
+2. Regenerate types with `npm run generate-types`
+3. Update mock data files with TypeScript validation
+4. Test with `npm run start:ex10`
+
+### 10.11 Key Learning Points
+
+✅ **Automated Type Generation**: No manual type definitions needed  
+✅ **Metadata Synchronization**: Types stay in sync with OData service  
+✅ **IDE Integration**: Full IntelliSense and error checking  
+✅ **Compile-Time Safety**: Catch data structure errors before runtime  
+✅ **Navigation Properties**: Proper typing for complex relationships  
+✅ **Draft Support**: Built-in SAP Fiori draft entity handling
+
+**Next Level**: Combine type-safe mock data with the JavaScript logic patterns from Exercise 3 for the most robust mock data development experience.
+

@@ -1,35 +1,64 @@
-module.exports = {
-  // Main dispatcher for unbound (service-level) actions
-  executeAction: function (actionDefinition, actionData, keys, odataRequest) {
-    console.log('🌐 Executing unbound action:', actionDefinition.name);
-    console.log('📊 Service context:', {
-      timestamp: new Date().toISOString(),
-      tenant: odataRequest?.tenantId || 'default',
-    });
+import type { ODataRequest, Action, KeyDefinitions } from '@sap-ux/ui5-middleware-fe-mockserver';
+import { MockEntityContainerContributorClass } from '@sap-ux/ui5-middleware-fe-mockserver';
+import type {
+  return_BookshopService_getSumBookPrices,
+  Books,
+  return_BookshopService_refreshCatalog,
+  return_BookshopService_generateReport,
+  return_BookshopService_createBooksAndChapters,
+  ap_BookshopService_createBooksAndChapters_booksData,
+} from './ODataTypes';
 
-    switch (actionDefinition.name) {
-      case 'createBooksAndChapters':
-        return this.handleBulkBookCreation(actionData);
+type EntityContainerAction_getSumBookPricesData = {}
+type EntityContainerAction_massHalfPriceData = {
+  books?: Books[];
+}
+type EntityContainerAction_refreshCatalogData = {}
+type EntityContainerAction_generateReportData = {
+  reportType?: string;
+  dateFrom?: Date;
+  dateTo?: Date;
+}
+type EntityContainerAction_createBooksAndChaptersData = {
+  booksData?: ap_BookshopService_createBooksAndChapters_booksData[];
+}
+  ;
+export type EntityContainerActionData =
+  | {
+  _type: 'getSumBookPrices';
+}
+  | {
+  _type: 'massHalfPrice';
+} & EntityContainerAction_massHalfPriceData
+  | {
+  _type: 'refreshCatalog';
+}
+  | {
+  _type: 'generateReport';
+} & EntityContainerAction_generateReportData
+  | {
+  _type: 'createBooksAndChapters';
+} & EntityContainerAction_createBooksAndChaptersData;
 
-      case 'generateInventoryReport':
-        return this.handleInventoryReport(actionData);
+export default class EntityContainer extends MockEntityContainerContributorClass {
 
-      case 'bulkUpdatePrices':
-        return this.handleBulkPriceUpdate(actionData);
+  async getSumBookPrices(_actionDefinition: Action, _actionData: EntityContainerAction_getSumBookPricesData, _keys: KeyDefinitions, _odataRequest: ODataRequest): Promise<return_BookshopService_getSumBookPrices> {
+    throw new Error('getSumBookPrices is not implemented');
+  }
 
-      default:
-        this.throwError(`Unbound action '${actionDefinition.name}' not implemented`, 501, {
-          error: {
-            code: 'UNBOUND_ACTION_NOT_FOUND',
-            message: `Service-level action '${actionDefinition.name}' is not available`,
-            target: actionDefinition.name,
-          },
-        });
-    }
-  },
+  async massHalfPrice(_actionDefinition: Action, _actionData: EntityContainerAction_massHalfPriceData, _keys: KeyDefinitions, _odataRequest: ODataRequest): Promise<Books[]> {
+    throw new Error('massHalfPrice is not implemented');
+  }
 
-  // Sophisticated bulk book creation with transaction-like behavior
-  handleBulkBookCreation: function (actionData) {
+  async refreshCatalog(_actionDefinition: Action, _actionData: EntityContainerAction_refreshCatalogData, _keys: KeyDefinitions, _odataRequest: ODataRequest): Promise<return_BookshopService_refreshCatalog> {
+    throw new Error('refreshCatalog is not implemented');
+  }
+
+  async generateReport(_actionDefinition: Action, _actionData: EntityContainerAction_generateReportData, _keys: KeyDefinitions, _odataRequest: ODataRequest): Promise<return_BookshopService_generateReport> {
+    throw new Error('generateReport is not implemented');
+  }
+
+  async createBooksAndChapters(_actionDefinition: Action, actionData: EntityContainerAction_createBooksAndChaptersData, _keys: KeyDefinitions, _odataRequest: ODataRequest): Promise<return_BookshopService_createBooksAndChapters> {
     console.log('📚 Processing bulk book creation...');
 
     // Validate input structure
@@ -85,7 +114,7 @@ module.exports = {
       }
 
       // Price validation
-      const price = parseFloat(bookData.price);
+      const price = parseFloat(bookData.price.toString());
       if (isNaN(price) || price < 0) {
         bookErrors.push({
           code: 'INVALID_PRICE',
@@ -181,14 +210,43 @@ module.exports = {
 
     // Add warnings if any books failed
     if (failedBooks.length > 0) {
-      response.warnings = failedBooks.map(failed => ({
-        code: 'BOOK_CREATION_FAILED',
-        message: `Failed to create "${failed.title}": ${failed.error}`,
-        severity: 'warning',
-      }));
+      // response.warnings = failedBooks.map(failed => ({
+      //   code: 'BOOK_CREATION_FAILED',
+      //   message: `Failed to create "${failed.title}": ${failed.error}`,
+      //   severity: 'warning',
+      // }));
     }
 
     console.log(`📊 Bulk creation summary: ${createdBooks.length}/${actionData.booksData.length} successful`);
     return response;
-  },
-};
+  }
+
+  async executeAction(actionDefinition: Action, actionData: EntityContainerActionData, keys: KeyDefinitions, odataRequest: ODataRequest): Promise<unknown> {
+    console.log('🌐 Executing unbound action:', actionDefinition.name);
+    console.log('📊 Service context:', {
+      timestamp: new Date().toISOString(),
+      tenant: odataRequest?.tenantId || 'default',
+    });
+    switch (actionData._type) {
+      case 'getSumBookPrices':
+        return this.getSumBookPrices(actionDefinition, actionData, keys, odataRequest);
+      case 'massHalfPrice':
+        return this.massHalfPrice(actionDefinition, actionData, keys, odataRequest);
+      case 'refreshCatalog':
+        return this.refreshCatalog(actionDefinition, actionData, keys, odataRequest);
+      case 'generateReport':
+        return this.generateReport(actionDefinition, actionData, keys, odataRequest);
+      case 'createBooksAndChapters':
+        return this.createBooksAndChapters(actionDefinition, actionData, keys, odataRequest);
+      default:
+        this.throwError(`Unbound action '${actionDefinition.name}' not implemented`, 501, {
+          error: {
+            code: 'UNBOUND_ACTION_NOT_FOUND',
+            message: `Service-level action '${actionDefinition.name}' is not available`,
+            target: actionDefinition.name,
+          },
+        });
+        return;
+    }
+  }
+}
