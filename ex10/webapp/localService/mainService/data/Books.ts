@@ -72,8 +72,6 @@ export type BooksActionData =
   _type: 'getCurrentPrice';
 } & BooksAction_getCurrentPriceData;
 
-debugger;
-
 export default class BooksContributor extends MockDataContributorClass<Books> {
   getInitialDataSet(contextId: string): Books[] {
     const books = [];
