@@ -1,0 +1,19 @@
+[
+  {
+    "ID": "tenant002-book-001",
+    "title": "Tenant 2: Marketing Strategies",
+    "author": "Marketing Gurus",
+    "price": 45.0,
+    "currency_code": "USD",
+    "stock": 25,
+    "description": "Marketing-focused content for Tenant 002.",
+    "coverUrl": "https://picsum.photos/300/400?random=tenant002",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "createdBy": "tenant002-admin",
+    "modifiedAt": "2025-01-01T00:00:00.000Z",
+    "modifiedBy": "tenant002-admin",
+    "IsActiveEntity": true,
+    "HasActiveEntity": false,
+    "HasDraftEntity": false
+  }
+]

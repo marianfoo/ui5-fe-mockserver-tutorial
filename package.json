@@ -21,6 +21,7 @@
     "test:ex8-e2e": "npm run wdi5 --prefix ex8",
     "start:ex9-record": "npm run start-record --prefix ex9",
     "start:ex9-mock": "npm run start-mock --prefix ex9",
+    "start:ex10": "npm run start-mock --prefix ex10",
     "format": "prettier --write ."
   },
   "keywords": [

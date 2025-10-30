@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 10: TypeScript Type Generation - UI5 FE Mockserver Tutorial</title>
+    <meta
+      name="description"
+      content="Learn how to leverage TypeScript type generation from OData metadata for type-safe mock data development." />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+  </head>
+  <body>
+    <div class="site-container">
+      <nav class="sidebar">
+        <a href="../index.html" class="nav-logo">📚 UI5 FE Mockserver Tutorial</a>
+
+        <div class="nav-section">
+          <h3>Getting Started</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../index.html" class="nav-link">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a href="../getting-started.html" class="nav-link">Prerequisites & Setup</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Exercises</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="basic-setup.html" class="nav-link" data-exercise="ex1">1. Basic Setup</a>
+            </li>
+            <li class="nav-item">
+              <a href="custom-json-data.html" class="nav-link" data-exercise="ex2">2. Custom JSON Data</a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript-logic.html" class="nav-link" data-exercise="ex3">3. JavaScript Logic</a>
+            </li>
+            <li class="nav-item">
+              <a href="multiple-services.html" class="nav-link" data-exercise="ex4">4. Multiple Services</a>
+            </li>
+            <li class="nav-item">
+              <a href="cross-service-communication.html" class="nav-link" data-exercise="ex5">
+                5. Cross-Service Communication
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="tenant-isolation.html" class="nav-link" data-exercise="ex6">6. Tenant Isolation</a>
+            </li>
+            <li class="nav-item">
+              <a href="error-handling.html" class="nav-link" data-exercise="ex7">7. Error Handling</a>
+            </li>
+            <li class="nav-item">
+              <a href="e2e-testing.html" class="nav-link" data-exercise="ex8">8. E2E Testing with wdi5</a>
+            </li>
+            <li class="nav-item">
+              <a href="odata-recorder.html" class="nav-link" data-exercise="ex9">9. OData Recorder</a>
+            </li>
+            <li class="nav-item">
+              <a href="typescript-types.html" class="nav-link" data-exercise="ex10">10. TypeScript Types</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3>Reference</h3>
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="../summary.html" class="nav-link">Summary & Next Steps</a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial" class="nav-link" target="_blank">
+                GitHub Repository ↗
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="https://github.com/SAP/open-ux-odata" class="nav-link" target="_blank">Open UX OData ↗</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <h1>Exercise 10: TypeScript Type Generation with Mockserver Admin</h1>
+
+        <div class="section-intro">
+          Exercise 10 demonstrates how to leverage <strong>@sap-ux/fe-mockserver-admin</strong> to automatically generate TypeScript type definitions from your OData metadata. This provides type safety, IntelliSense support, and compile-time validation for mock data development.
+        </div>
+
+        <div class="content-section">
+          <h2 id="overview">10.1 Overview: Type-Safe Mock Data Development</h2>
+
+          <p>Exercise 10 demonstrates how to leverage <strong>@sap-ux/fe-mockserver-admin</strong> to automatically generate TypeScript type definitions from your OData metadata. This provides:</p>
+
+          <ul>
+            <li><strong>Type safety</strong> for mock data development</li>
+            <li><strong>IntelliSense support</strong> in your IDE</li>
+            <li><strong>Compile-time validation</strong> of mock data structures</li>
+            <li><strong>Automated type generation</strong> from OData metadata</li>
+          </ul>
+
+          <p>The <code>fe-mockserver-admin</code> package analyzes your service metadata and generates corresponding TypeScript interfaces, eliminating manual type definitions and ensuring consistency with your actual OData service.</p>
+        </div>
+
+        <div class="content-section">
+          <h2 id="package-installation">10.2 Package Installation and Setup</h2>
+
+          <p>Exercise 10 includes the required dependencies and scripts for type generation:</p>
+
+          <h3>Key Dependencies in <code>package.json</code>:</h3>
+          <div class="code-header">
+            <span>ex10/package.json</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex10/package.json"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-json"><code>{
+  "devDependencies": {
+    "@sap-ux/fe-mockserver-admin": "0.0.14",
+    "typescript": "^5.9.3",
+    "ts-node": "^10.9.2"
+  },
+  "scripts": {
+    "generate-entity-files": "fe-mockserver-admin generate-entity-files -m ./webapp/localService/mainService/metadata.xml --output ./webapp/localService/mainService/data",
+    "generate-types": "fe-mockserver-admin generate-types -m ./webapp/localService/mainService/metadata.xml --output ./webapp/localService/mainService/data"
+  }
+}</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="typescript-configuration">10.3 TypeScript Configuration</h2>
+
+          <p>The <code>tsconfig.json</code> is configured for optimal mock data development:</p>
+
+          <div class="code-header">
+            <span>ex10/tsconfig.json</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex10/tsconfig.json"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-json"><code>{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "commonjs",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "strict": false,
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node",
+    "rootDir": "./webapp",
+    "noEmitOnError": false,
+    "baseUrl": "./"
+  }
+}</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="automatic-type-generation">10.4 Automatic Type Generation from Metadata</h2>
+
+          <p><strong>Generate TypeScript types from your OData metadata:</strong></p>
+
+          <pre class="language-bash"><code>npm run generate-types</code></pre>
+
+          <p>This command analyzes <code>metadata.xml</code> and creates comprehensive type definitions:</p>
+
+          <h3>Generated Files Structure:</h3>
+          <div class="code-header">
+            <span>ex10/webapp/localService/mainService/data/ODataTypes.d.ts</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex10/webapp/localService/mainService/data/ODataTypes.d.ts"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-typescript"><code>// ====== Entity Types ======
+
+// Type definitions for Books
+export type Books = {
+  createdAt?: string;
+  createdBy?: string;
+  modifiedAt?: string;
+  modifiedBy?: string;
+  ID: string;
+  title?: string;
+  author?: string;
+  price?: number;
+  currency_code?: string;
+  stock?: number;
+  description?: string;
+  coverUrl?: string;
+  IsActiveEntity: boolean;
+  HasActiveEntity: boolean;
+  HasDraftEntity: boolean;
+  currency?: NavPropTo<Currencies>;
+  chapters?: NavPropTo<Chapters[]>;
+  reviews?: NavPropTo<Reviews[]>;
+  DraftAdministrativeData?: NavPropTo<DraftAdministrativeData>;
+  SiblingEntity?: NavPropTo<Books>;
+}
+
+export type BooksKeys = {
+  ID: string;
+  IsActiveEntity: boolean;
+}
+
+// ====== Complex Types ======
+
+// Type definitions for return_BookshopService_Books_setDiscount
+export type return_BookshopService_Books_setDiscount = {
+  message?: string;
+  newPrice?: number;
+}</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="type-safe-development">10.5 Type-Safe Mock Data Development</h2>
+
+          <p>With generated types, you can create type-safe mock data files:</p>
+
+          <h3>Example: Type-safe <code>Books.ts</code> mock data:</h3>
+          <div class="code-header">
+            <span>ex10/webapp/localService/mainService/data/Books.ts</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex10/webapp/localService/mainService/data/Books.ts"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-typescript"><code>import type {
+  ODataRequest,
+  Action,
+  NavigationProperty,
+  PartialReferentialConstraint,
+} from '@sap-ux/ui5-middleware-fe-mockserver';
+import { MockDataContributorClass } from '@sap-ux/ui5-middleware-fe-mockserver';
+import type {
+  Books,
+  BooksKeys,
+  return_BookshopService_Books_promoteBook,
+  return_BookshopService_Books_setDiscount,
+} from './ODataTypes';
+
+export default class BooksContributor extends MockDataContributorClass<Books> {
+  getInitialDataSet(contextId: string): Books[] {
+    const books = [];
+    const authors = ['Jane Austen', 'Mark Twain', 'Charles Dickens', 'Ernest Hemingway', 'Virginia Woolf'];
+    const genres = ['Fiction', 'Mystery', 'Romance', 'Science Fiction', 'Biography'];
+
+    for (let i = 0; i < 20; i++) {
+      const randomAuthor = authors[Math.floor(Math.random() * authors.length)];
+      const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+
+      books.push({
+        ID: `550e8400-e29b-41d4-a716-44665544${String(i).padStart(4, '0')}`,
+        title: `${randomGenre} Book ${i + 1}`,
+        author: randomAuthor,
+        price: Math.floor(Math.random() * 50) + 10,
+        currency_code: Math.random() > 0.5 ? 'EUR' : 'USD',
+        stock: Math.floor(Math.random() * 100),
+        description: `A compelling ${randomGenre.toLowerCase()} story by ${randomAuthor}.`,
+        coverUrl: `https://picsum.photos/300/400?random=${i}`,
+        createdAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
+        createdBy: 'admin',
+        modifiedAt: new Date().toISOString(),
+        modifiedBy: 'admin',
+        IsActiveEntity: true,
+        HasActiveEntity: false,
+        HasDraftEntity: Math.random() > 0.8, // 20% chance of being in draft
+      });
+    }
+    return books;
+  }
+
+  async setDiscount(_actionDefinition: Action, actionData: BooksAction_setDiscountData, keys: BooksKeys, odataRequest: ODataRequest): Promise<return_BookshopService_Books_setDiscount> {
+    // Simple validation example - discount cannot exceed 90%
+    if (actionData.percentage > 90) {
+      this.throwError('Discount cannot exceed 90%', 400, {
+        error: {
+          code: 'INVALID_DISCOUNT',
+          message: 'Company policy: Maximum discount is 90%',
+        },
+      });
+    }
+
+    // Normal business logic continues...
+    const currentEntries = await this.base.fetchEntries(keys, odataRequest);
+    if (currentEntries.length > 0) {
+      const currentBook = currentEntries[0];
+      const discountPercentage = actionData.percentage || 10; // Default 10% if not provided
+      const discountMultiplier = (100 - discountPercentage) / 100;
+      const newPrice = Math.round(currentBook.price * discountMultiplier * 100) / 100;
+
+      // Update the book with new price
+      await this.base.updateEntry(keys, { price: newPrice }, odataRequest);
+
+      return {
+        message: `${discountPercentage}% discount applied to "${currentBook.title}"`,
+        newPrice: newPrice,
+      };
+    }
+  }
+}</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="benefits">10.6 Benefits of Type-Safe Mock Development</h2>
+
+          <h3>1. Compile-Time Validation</h3>
+          <pre class="language-typescript"><code>// ❌ TypeScript catches errors at compile time
+const invalidBook: Books = {
+  ID: "123",
+  price: "invalid", // Error: Type 'string' is not assignable to type 'number'
+  IsActiveEntity: true,
+  HasActiveEntity: false,
+  HasDraftEntity: false
+};</code></pre>
+
+          <h3>2. IntelliSense Support</h3>
+          <ul>
+            <li>Auto-completion for entity properties</li>
+            <li>Type hints for action parameters and return types</li>
+            <li>Navigation property type safety</li>
+          </ul>
+
+          <h3>3. Metadata Synchronization</h3>
+          <ul>
+            <li>Types automatically reflect metadata changes</li>
+            <li>Consistent data structures across all mock files</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="integration">10.7 Integration with Existing Mockserver Workflows</h2>
+
+          <p>The generated TypeScript files work seamlessly with the existing mockserver:</p>
+
+          <h3>Standard <code>ui5-mock.yaml</code> Configuration:</h3>
+          <div class="code-header">
+            <span>ex10/ui5-mock.yaml</span>
+            <a
+              href="https://github.com/marianfoo/ui5-fe-mockserver-tutorial/blob/main/ex10/ui5-mock.yaml"
+              target="_blank"
+              rel="noopener">
+              View on GitHub ↗
+            </a>
+          </div>
+          <pre class="language-yaml"><code>- name: sap-fe-mockserver
+  beforeMiddleware: csp
+  configuration:
+    services:
+      - urlPath: /bookshop
+        metadataPath: ./webapp/localService/mainService/data
+        generateMockData: false</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h2 id="running">10.8 Running Exercise 10</h2>
+
+          <p><strong>Start the application with TypeScript-generated mock data:</strong></p>
+
+          <pre class="language-bash"><code>npm run start:ex10</code></pre>
+
+          <p><strong>What you'll experience:</strong></p>
+          <ul>
+            <li>Type-safe mock data loaded from <code>.ts</code> files</li>
+            <li>Consistent data structure matching your OData service</li>
+            <li>Full IntelliSense support during development</li>
+            <li>Compile-time validation of all mock data</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h2 id="best-practices">10.9 Best Practices</h2>
+
+          <h3>1. Regenerate Types After Metadata Changes</h3>
+          <pre class="language-bash"><code># After updating metadata.xml
+npm run generate-types</code></pre>
+
+          <h3>2. Version Control Strategy</h3>
+          <ul>
+            <li><strong>Include</strong>: <code>ODataTypes.d.ts</code> and other generated type files</li>
+            <li><strong>Exclude</strong>: Generated <code>.js</code> files (if using ts-node)</li>
+          </ul>
+
+          <h3>3. Development Workflow</h3>
+          <ol>
+            <li>Update service metadata</li>
+            <li>Regenerate types with <code>npm run generate-types</code></li>
+            <li>Update mock data files with TypeScript validation</li>
+            <li>Test with <code>npm run start:ex10</code></li>
+          </ol>
+        </div>
+
+        <div class="content-section">
+          <h2 id="key-learning-points">10.10 Key Learning Points</h2>
+
+          <p>✅ <strong>Automated Type Generation</strong>: No manual type definitions needed<br>
+          ✅ <strong>Metadata Synchronization</strong>: Types stay in sync with OData service<br>
+          ✅ <strong>IDE Integration</strong>: Full IntelliSense and error checking<br>
+          ✅ <strong>Compile-Time Safety</strong>: Catch data structure errors before runtime<br>
+          ✅ <strong>Navigation Properties</strong>: Proper typing for complex relationships<br>
+          ✅ <strong>Draft Support</strong>: Built-in SAP Fiori draft entity handling</p>
+
+          <p><strong>Next Level</strong>: Combine type-safe mock data with the JavaScript logic patterns from Exercise 3 for the most robust mock data development experience.</p>
+        </div>
+
+        <div class="exercise-nav">
+          <div>
+            <a href="odata-recorder.html" class="exercise-nav-prev">← Exercise 9: OData Recorder</a>
+          </div>
+          <div>
+            <a href="../summary.html" class="exercise-nav-next">Summary & Next Steps →</a>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>
